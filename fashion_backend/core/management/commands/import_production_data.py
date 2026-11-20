@@ -4,90 +4,81 @@ import os
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction
+from django.db import connection, transaction
 
 from catalog.models import Category, Product, ProductVariant
 
 
 class Command(BaseCommand):
-    help = "Import initial Roseva Fashion catalog and website content"
+    help = "Import initial Roseva Fashion data into production"
 
     def handle(self, *args, **options):
 
-        enabled = os.environ.get(
-            "IMPORT_INITIAL_DATA", ""
-        ).strip().lower()
-
-        if enabled != "true":
-            self.stdout.write(
-                "Initial data import is disabled."
-            )
+        if os.environ.get("IMPORT_INITIAL_DATA", "").lower() != "true":
+            self.stdout.write("Initial import disabled.")
             return
 
         fixture_path = settings.BASE_DIR / "production_data.json"
 
         if not fixture_path.is_file():
             raise CommandError(
-                f"Fixture file not found: {fixture_path}"
+                f"Missing fixture: {fixture_path}"
             )
 
-        existing_products = Product.objects.count()
-        existing_categories = Category.objects.count()
-        existing_variants = ProductVariant.objects.count()
-
         self.stdout.write(
-            f"Existing products: {existing_products}"
-        )
-        self.stdout.write(
-            f"Existing categories: {existing_categories}"
-        )
-        self.stdout.write(
-            f"Existing variants: {existing_variants}"
+            f"Database engine: {connection.vendor}"
         )
 
-        # Prevent overwriting existing production catalog data.
-        if any((
-            existing_products,
-            existing_categories,
-            existing_variants,
-        )):
-            self.stdout.write(
-                self.style.WARNING(
-                    "Catalog already contains data. "
-                    "Import skipped to protect existing records."
-                )
-            )
-            return
-
-        self.stdout.write(
-            "Importing initial Roseva Fashion data..."
-        )
-
-        try:
-            with transaction.atomic():
-                call_command(
-                    "loaddata",
-                    str(fixture_path),
-                    verbosity=1,
-                )
-
-        except Exception as exc:
+        if connection.vendor != "postgresql":
             raise CommandError(
-                f"Initial data import failed: {exc}"
-            ) from exc
+                "Production import requires PostgreSQL. "
+                "Check the DATABASE_URL environment variable."
+            )
+
+        with transaction.atomic():
+
+            product_count = Product.objects.count()
+            category_count = Category.objects.count()
+            variant_count = ProductVariant.objects.count()
+
+            self.stdout.write(
+                f"Before import: "
+                f"{product_count} products, "
+                f"{category_count} categories, "
+                f"{variant_count} variants"
+            )
+
+            if (
+                product_count > 0
+                or category_count > 0
+                or variant_count > 0
+            ):
+                self.stdout.write(
+                    self.style.WARNING(
+                        "Existing catalog found. Import skipped."
+                    )
+                )
+                return
+
+            self.stdout.write(
+                "Importing Roseva Fashion fixture..."
+            )
+
+            call_command(
+                "loaddata",
+                str(fixture_path),
+                verbosity=1,
+            )
+
+            self.stdout.write(
+                f"After import: "
+                f"{Product.objects.count()} products, "
+                f"{Category.objects.count()} categories, "
+                f"{ProductVariant.objects.count()} variants"
+            )
 
         self.stdout.write(
             self.style.SUCCESS(
-                "Initial website data imported successfully."
+                "Production data import completed."
             )
-        )
-
-        self.stdout.write(
-            f"Products: {Product.objects.count()}"
-        )
-        self.stdout.write(
-            f"Categories: {Category.objects.count()}"
-        )
-        self.stdout.write(
-            f"Variants: {ProductVariant.objects.count()}"
         )
