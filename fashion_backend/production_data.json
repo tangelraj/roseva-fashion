@@ -1,964 +1,965 @@
-[
-{
-  "model": "catalog.category",
-  "pk": 1,
-  "fields": {
-    "name": "Sarees",
-    "slug": "sarees",
-    "description": "Explore our Sarees collection.",
-    "image": "categories/category-sarees.jpeg",
-    "display_order": 0,
-    "is_active": true
+python manage.py loaddata production_data.json
+  [
+  {
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+      "name": "Sarees",
+      "slug": "sarees",
+      "description": "Explore our Sarees collection.",
+      "image": "categories/category-sarees.jpeg",
+      "display_order": 0,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+      "name": "Salwar Suits",
+      "slug": "salwar",
+      "description": "Explore our Salwar Suits collection.",
+      "image": "categories/category-salwar.jpeg",
+      "display_order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+      "name": "Frocks",
+      "slug": "frocks",
+      "description": "Explore our Frocks collection.",
+      "image": "categories/category-frocks.jpeg",
+      "display_order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 4,
+    "fields": {
+      "name": "Kurtis",
+      "slug": "kurtis",
+      "description": "Explore our Kurtis collection.",
+      "image": "categories/category-kurtis.jpeg",
+      "display_order": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 5,
+    "fields": {
+      "name": "Gowns",
+      "slug": "gowns",
+      "description": "Explore our Gowns collection.",
+      "image": "categories/category-gowns.jpeg",
+      "display_order": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 6,
+    "fields": {
+      "name": "Lehengas",
+      "slug": "lehengas",
+      "description": "Explore our Lehengas collection.",
+      "image": "categories/category-lehengas.jpeg",
+      "display_order": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+      "category": 1,
+      "name": "Rose Pink Silk Saree",
+      "slug": "rf-001",
+      "sku": "RF-001",
+      "description": "Rose Pink Silk Saree - Silk fabric, perfect for wedding occasions.",
+      "short_description": "",
+      "price": "3499.00",
+      "original_price": "4999.00",
+      "image": "products/product-1.webp",
+      "fabric": "Silk",
+      "occasion": "Wedding",
+      "age_group": "women",
+      "is_new": true,
+      "is_featured": false,
+      "is_active": true,
+      "created_at": "2026-11-19T19:57:52.820Z",
+      "updated_at": "2026-11-19T19:57:52.824Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+      "category": 2,
+      "name": "Cream Embroidered Salwar Suit",
+      "slug": "rf-002",
+      "sku": "RF-002",
+      "description": "Cream Embroidered Salwar Suit - Cotton fabric, perfect for festive occasions.",
+      "short_description": "",
+      "price": "2299.00",
+      "original_price": "3299.00",
+      "image": "products/product-2.webp",
+      "fabric": "Cotton",
+      "occasion": "Festive",
+      "age_group": "women",
+      "is_new": true,
+      "is_featured": false,
+      "is_active": true,
+      "created_at": "2026-11-19T19:57:52.828Z",
+      "updated_at": "2026-11-19T19:57:52.833Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 3,
+    "fields": {
+      "category": 3,
+      "name": "Girls Floral Party Frock",
+      "slug": "rf-003",
+      "sku": "RF-003",
+      "description": "Girls Floral Party Frock - Net fabric, perfect for party occasions.",
+      "short_description": "",
+      "price": "1299.00",
+      "original_price": "1999.00",
+      "image": "products/product-3.avif",
+      "fabric": "Net",
+      "occasion": "Party",
+      "age_group": "kids",
+      "is_new": true,
+      "is_featured": false,
+      "is_active": true,
+      "created_at": "2026-11-19T19:57:52.843Z",
+      "updated_at": "2026-11-19T19:57:52.846Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 4,
+    "fields": {
+      "category": 4,
+      "name": "Cotton Printed Kurti",
+      "slug": "rf-004",
+      "sku": "RF-004",
+      "description": "Cotton Printed Kurti - Cotton fabric, perfect for casual occasions.",
+      "short_description": "",
+      "price": "899.00",
+      "original_price": "1499.00",
+      "image": "products/product-4.webp",
+      "fabric": "Cotton",
+      "occasion": "Casual",
+      "age_group": "teens",
+      "is_new": false,
+      "is_featured": false,
+      "is_active": true,
+      "created_at": "2026-11-19T19:57:52.862Z",
+      "updated_at": "2026-11-19T19:57:52.867Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 5,
+    "fields": {
+      "category": 5,
+      "name": "Maroon Festive Gown",
+      "slug": "rf-005",
+      "sku": "RF-005",
+      "description": "Maroon Festive Gown - Georgette fabric, perfect for festive occasions.",
+      "short_description": "",
+      "price": "2899.00",
+      "original_price": "3999.00",
+      "image": "products/product-5.jpg",
+      "fabric": "Georgette",
+      "occasion": "Festive",
+      "age_group": "women",
+      "is_new": true,
+      "is_featured": true,
+      "is_active": true,
+      "created_at": "2026-11-19T19:57:52.882Z",
+      "updated_at": "2026-11-19T19:57:52.885Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 6,
+    "fields": {
+      "category": 6,
+      "name": "Rose Gold Designer Lehenga",
+      "slug": "rf-006",
+      "sku": "RF-006",
+      "description": "Rose Gold Designer Lehenga - Silk fabric, perfect for wedding occasions.",
+      "short_description": "",
+      "price": "5999.00",
+      "original_price": "7999.00",
+      "image": "",
+      "fabric": "Silk",
+      "occasion": "Wedding",
+      "age_group": "women",
+      "is_new": false,
+      "is_featured": true,
+      "is_active": true,
+      "created_at": "2026-11-19T19:57:52.896Z",
+      "updated_at": "2026-11-19T19:57:52.896Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 7,
+    "fields": {
+      "category": 1,
+      "name": "Georgette Designer Saree",
+      "slug": "rf-007",
+      "sku": "RF-007",
+      "description": "Georgette Designer Saree - Georgette fabric, perfect for party occasions.",
+      "short_description": "",
+      "price": "2599.00",
+      "original_price": "3499.00",
+      "image": "",
+      "fabric": "Georgette",
+      "occasion": "Party",
+      "age_group": "women",
+      "is_new": true,
+      "is_featured": true,
+      "is_active": true,
+      "created_at": "2026-11-19T19:57:52.907Z",
+      "updated_at": "2026-11-19T19:57:52.907Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 8,
+    "fields": {
+      "category": 3,
+      "name": "Girls Cotton Cas",
+      "slug": "rf-008",
+      "sku": "RF-008",
+      "description": "Girls Cotton Casual Frock - Cotton fabric, perfect for casual occassion",
+      "short_description": "",
+      "price": "799.00",
+      "original_price": "1199.00",
+      "image": "products/product-8.webp",
+      "fabric": "Cotton",
+      "occasion": "Casual",
+      "age_group": "kids",
+      "is_new": false,
+      "is_featured": true,
+      "is_active": true,
+      "created_at": "2026-11-19T19:57:52.911Z",
+      "updated_at": "2026-11-20T03:50:58.597Z"
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 1,
+    "fields": {
+      "product": 1,
+      "size": "Free Size",
+      "color": "Pink",
+      "sku": "RF-001-1",
+      "stock": 12,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 2,
+    "fields": {
+      "product": 2,
+      "size": "S",
+      "color": "Cream",
+      "sku": "RF-002-1",
+      "stock": 11,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 3,
+    "fields": {
+      "product": 2,
+      "size": "M",
+      "color": "Cream",
+      "sku": "RF-002-2",
+      "stock": 14,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 4,
+    "fields": {
+      "product": 2,
+      "size": "L",
+      "color": "Cream",
+      "sku": "RF-002-3",
+      "stock": 16,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 5,
+    "fields": {
+      "product": 2,
+      "size": "XL",
+      "color": "Cream",
+      "sku": "RF-002-4",
+      "stock": 15,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 6,
+    "fields": {
+      "product": 3,
+      "size": "2-3Y",
+      "color": "Pink",
+      "sku": "RF-003-1",
+      "stock": 12,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 7,
+    "fields": {
+      "product": 3,
+      "size": "4-5Y",
+      "color": "Pink",
+      "sku": "RF-003-2",
+      "stock": 11,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 8,
+    "fields": {
+      "product": 3,
+      "size": "6-7Y",
+      "color": "Pink",
+      "sku": "RF-003-3",
+      "stock": 14,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 9,
+    "fields": {
+      "product": 3,
+      "size": "8-9Y",
+      "color": "Pink",
+      "sku": "RF-003-4",
+      "stock": 15,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 10,
+    "fields": {
+      "product": 4,
+      "size": "XS",
+      "color": "Blue",
+      "sku": "RF-004-1",
+      "stock": 12,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 11,
+    "fields": {
+      "product": 4,
+      "size": "S",
+      "color": "Blue",
+      "sku": "RF-004-2",
+      "stock": 14,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 12,
+    "fields": {
+      "product": 4,
+      "size": "M",
+      "color": "Blue",
+      "sku": "RF-004-3",
+      "stock": 14,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 13,
+    "fields": {
+      "product": 4,
+      "size": "L",
+      "color": "Blue",
+      "sku": "RF-004-4",
+      "stock": 15,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 14,
+    "fields": {
+      "product": 5,
+      "size": "S",
+      "color": "Maroon",
+      "sku": "RF-005-1",
+      "stock": 14,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 15,
+    "fields": {
+      "product": 5,
+      "size": "M",
+      "color": "Maroon",
+      "sku": "RF-005-2",
+      "stock": 14,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 16,
+    "fields": {
+      "product": 5,
+      "size": "L",
+      "color": "Maroon",
+      "sku": "RF-005-3",
+      "stock": 13,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 17,
+    "fields": {
+      "product": 5,
+      "size": "XL",
+      "color": "Maroon",
+      "sku": "RF-005-4",
+      "stock": 12,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 18,
+    "fields": {
+      "product": 6,
+      "size": "S",
+      "color": "Rose Gold",
+      "sku": "RF-006-1",
+      "stock": 10,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 19,
+    "fields": {
+      "product": 6,
+      "size": "M",
+      "color": "Rose Gold",
+      "sku": "RF-006-2",
+      "stock": 14,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 20,
+    "fields": {
+      "product": 6,
+      "size": "L",
+      "color": "Rose Gold",
+      "sku": "RF-006-3",
+      "stock": 9,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 21,
+    "fields": {
+      "product": 7,
+      "size": "Free Size",
+      "color": "Purple",
+      "sku": "RF-007-1",
+      "stock": 7,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 22,
+    "fields": {
+      "product": 8,
+      "size": "2-3Y",
+      "color": "Yellow",
+      "sku": "RF-008-1",
+      "stock": 8,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 23,
+    "fields": {
+      "product": 8,
+      "size": "4-5Y",
+      "color": "Yellow",
+      "sku": "RF-008-2",
+      "stock": 6,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 24,
+    "fields": {
+      "product": 8,
+      "size": "6-7Y",
+      "color": "Yellow",
+      "sku": "RF-008-3",
+      "stock": 6,
+      "is_active": true
+    }
+  },
+  {
+    "model": "catalog.productvariant",
+    "pk": 25,
+    "fields": {
+      "product": 8,
+      "size": "8-9Y",
+      "color": "Yellow",
+      "sku": "RF-008-4",
+      "stock": 7,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.websitesettings",
+    "pk": 1,
+    "fields": {
+      "site_name": "ROSÉVA",
+      "logo": "",
+      "favicon": "",
+      "email": "support@example.com",
+      "phone": "",
+      "whatsapp": "",
+      "address": "India",
+      "instagram_url": "https://instagram.com",
+      "facebook_url": "https://facebook.com",
+      "currency_symbol": "₹",
+      "brand_tagline": "FASHION",
+      "top_bar_message": "Free shipping on orders above ₹999",
+      "footer_description": "Discover timeless elegance, beautiful ethnic wear, and modern styles for girls and women.",
+      "footer_bottom_text": "Made with love for beautiful fashion.",
+      "search_placeholder": "Search sarees, frocks, kurtis..."
+    }
+  },
+  {
+    "model": "core.navigationlink",
+    "pk": 1,
+    "fields": {
+      "title": "New Arrivals",
+      "url": "/shop?sort=newest",
+      "display_order": 0,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.navigationlink",
+    "pk": 2,
+    "fields": {
+      "title": "Sarees",
+      "url": "/shop?category=sarees",
+      "display_order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.navigationlink",
+    "pk": 3,
+    "fields": {
+      "title": "Salwar Suits",
+      "url": "/shop?category=salwar",
+      "display_order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.navigationlink",
+    "pk": 4,
+    "fields": {
+      "title": "Frocks",
+      "url": "/shop?category=frocks",
+      "display_order": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.navigationlink",
+    "pk": 5,
+    "fields": {
+      "title": "Kurtis",
+      "url": "/shop?category=kurtis",
+      "display_order": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.navigationlink",
+    "pk": 6,
+    "fields": {
+      "title": "Gowns",
+      "url": "/shop?category=gowns",
+      "display_order": 5,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.navigationlink",
+    "pk": 7,
+    "fields": {
+      "title": "Lehengas",
+      "url": "/shop?category=lehengas",
+      "display_order": 6,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.navigationlink",
+    "pk": 8,
+    "fields": {
+      "title": "Sale",
+      "url": "/shop?sort=discount",
+      "display_order": 7,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.herobanner",
+    "pk": 1,
+    "fields": {
+      "eyebrow": "THE WEDDING EDIT",
+      "title": "Celebrate Every Beautiful Moment 2026",
+      "subtitle": "Elegant sarees and suits for every celebration.",
+      "image": "banners/hero-wedding.jpeg",
+      "button_text": "Shop Collection",
+      "button_link": "/shop?occasion=Wedding",
+      "overlay_opacity": 0.35,
+      "text_alignment": "left",
+      "display_order": 0,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.herobanner",
+    "pk": 2,
+    "fields": {
+      "eyebrow": "TIMELESS ELEGANCE",
+      "title": "Draped in Grace",
+      "subtitle": "Discover our exquisite saree collection.",
+      "image": "banners/hero-saree.jpeg",
+      "button_text": "Shop Collection",
+      "button_link": "/shop?category=sarees",
+      "overlay_opacity": 0.35,
+      "text_alignment": "left",
+      "display_order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.herobanner",
+    "pk": 3,
+    "fields": {
+      "eyebrow": "LITTLE FASHION STORIES",
+      "title": "Made for Little Princesses",
+      "subtitle": "Adorable frocks for every special occasion.",
+      "image": "banners/hero-frocks.jpeg",
+      "button_text": "Shop Collection",
+      "button_link": "/shop?category=frocks",
+      "overlay_opacity": 0.35,
+      "text_alignment": "left",
+      "display_order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.benefititem",
+    "pk": 1,
+    "fields": {
+      "text": "Free Shipping Above ₹1999",
+      "icon": "truck",
+      "display_order": 0,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.benefititem",
+    "pk": 2,
+    "fields": {
+      "text": "Secure Shopping",
+      "icon": "shield",
+      "display_order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.benefititem",
+    "pk": 3,
+    "fields": {
+      "text": "Easy Returns*",
+      "icon": "refresh",
+      "display_order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.benefititem",
+    "pk": 4,
+    "fields": {
+      "text": "Curated Fashion",
+      "icon": "sparkles",
+      "display_order": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.homepagesection",
+    "pk": 1,
+    "fields": {
+      "section_key": "categories",
+      "display_order": 0,
+      "eyebrow": "EXPLORE OUR BEAUTIFUL COLLECTIONS",
+      "title": "Shop by Category",
+      "description": "Beautiful styles for every age and every occasion.",
+      "button_text": "Explore Collection",
+      "button_link": "/shop",
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.homepagesection",
+    "pk": 2,
+    "fields": {
+      "section_key": "new_arrivals",
+      "display_order": 1,
+      "eyebrow": "FRESHLY CURATED",
+      "title": "New Arrivals",
+      "description": "Discover the latest styles you'll fall in love with.",
+      "button_text": "View All Products",
+      "button_link": "/shop?sort=newest",
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.homepagesection",
+    "pk": 3,
+    "fields": {
+      "section_key": "featured",
+      "display_order": 2,
+      "eyebrow": "HANDPICKED FOR YOU",
+      "title": "Our Featured Collection",
+      "description": "Discover timeless outfits and beautiful everyday styles.",
+      "button_text": "",
+      "button_link": "",
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.homepagesection",
+    "pk": 4,
+    "fields": {
+      "section_key": "newsletter",
+      "display_order": 3,
+      "eyebrow": "THE ROSÉVA EDIT",
+      "title": "Style That Tells Your Story",
+      "description": "Explore elegant ethnic fashion for women, teens, and little girls.",
+      "button_text": "Shop All Collections",
+      "button_link": "/shop",
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.promobanner",
+    "pk": 1,
+    "fields": {
+      "eyebrow": "SPECIAL OCCASION EDIT",
+      "title": "Elegance for Every Celebration",
+      "description": "From wedding celebrations to festive gatherings, discover outfits made for unforgettable moments.",
+      "image": "",
+      "button_text": "Explore Wedding Edit",
+      "button_link": "/shop?occasion=Wedding",
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footergroup",
+    "pk": 1,
+    "fields": {
+      "title": "Quick Links",
+      "display_order": 0,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footergroup",
+    "pk": 2,
+    "fields": {
+      "title": "Collections",
+      "display_order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footergroup",
+    "pk": 3,
+    "fields": {
+      "title": "Customer Care",
+      "display_order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 1,
+    "fields": {
+      "group": 1,
+      "title": "Home",
+      "url": "/",
+      "display_order": 0,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 2,
+    "fields": {
+      "group": 1,
+      "title": "Shop All",
+      "url": "/shop",
+      "display_order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 3,
+    "fields": {
+      "group": 1,
+      "title": "Wishlist",
+      "url": "/wishlist",
+      "display_order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 4,
+    "fields": {
+      "group": 1,
+      "title": "Shopping Cart",
+      "url": "/cart",
+      "display_order": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 5,
+    "fields": {
+      "group": 2,
+      "title": "Saree",
+      "url": "/shop?category=sarees",
+      "display_order": 0,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 6,
+    "fields": {
+      "group": 2,
+      "title": "Salwar Suits",
+      "url": "/shop?category=salwar",
+      "display_order": 1,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 7,
+    "fields": {
+      "group": 2,
+      "title": "Frocks",
+      "url": "/shop?category=frocks",
+      "display_order": 2,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 8,
+    "fields": {
+      "group": 2,
+      "title": "Kurtis",
+      "url": "/shop?category=kurtis",
+      "display_order": 3,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 9,
+    "fields": {
+      "group": 2,
+      "title": "Lehengas",
+      "url": "/shop?category=lehengas",
+      "display_order": 4,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 10,
+    "fields": {
+      "group": 3,
+      "title": "Track Order",
+      "url": "/track-order",
+      "display_order": 0,
+      "is_active": true
+    }
+  },
+  {
+    "model": "core.footerlink",
+    "pk": 11,
+    "fields": {
+      "group": 3,
+      "title": "Contact Support",
+      "url": "mailto:support@example.com",
+      "display_order": 1,
+      "is_active": true
+    }
   }
-},
-{
-  "model": "catalog.category",
-  "pk": 2,
-  "fields": {
-    "name": "Salwar Suits",
-    "slug": "salwar",
-    "description": "Explore our Salwar Suits collection.",
-    "image": "categories/category-salwar.jpeg",
-    "display_order": 1,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.category",
-  "pk": 3,
-  "fields": {
-    "name": "Frocks",
-    "slug": "frocks",
-    "description": "Explore our Frocks collection.",
-    "image": "categories/category-frocks.jpeg",
-    "display_order": 2,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.category",
-  "pk": 4,
-  "fields": {
-    "name": "Kurtis",
-    "slug": "kurtis",
-    "description": "Explore our Kurtis collection.",
-    "image": "categories/category-kurtis.jpeg",
-    "display_order": 3,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.category",
-  "pk": 5,
-  "fields": {
-    "name": "Gowns",
-    "slug": "gowns",
-    "description": "Explore our Gowns collection.",
-    "image": "categories/category-gowns.jpeg",
-    "display_order": 4,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.category",
-  "pk": 6,
-  "fields": {
-    "name": "Lehengas",
-    "slug": "lehengas",
-    "description": "Explore our Lehengas collection.",
-    "image": "categories/category-lehengas.jpeg",
-    "display_order": 5,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.product",
-  "pk": 1,
-  "fields": {
-    "category": 1,
-    "name": "Rose Pink Silk Saree",
-    "slug": "rf-001",
-    "sku": "RF-001",
-    "description": "Rose Pink Silk Saree - Silk fabric, perfect for wedding occasions.",
-    "short_description": "",
-    "price": "3499.00",
-    "original_price": "4999.00",
-    "image": "products/product-1.webp",
-    "fabric": "Silk",
-    "occasion": "Wedding",
-    "age_group": "women",
-    "is_new": true,
-    "is_featured": false,
-    "is_active": true,
-    "created_at": "2026-11-19T19:57:52.820Z",
-    "updated_at": "2026-11-19T19:57:52.824Z"
-  }
-},
-{
-  "model": "catalog.product",
-  "pk": 2,
-  "fields": {
-    "category": 2,
-    "name": "Cream Embroidered Salwar Suit",
-    "slug": "rf-002",
-    "sku": "RF-002",
-    "description": "Cream Embroidered Salwar Suit - Cotton fabric, perfect for festive occasions.",
-    "short_description": "",
-    "price": "2299.00",
-    "original_price": "3299.00",
-    "image": "products/product-2.webp",
-    "fabric": "Cotton",
-    "occasion": "Festive",
-    "age_group": "women",
-    "is_new": true,
-    "is_featured": false,
-    "is_active": true,
-    "created_at": "2026-11-19T19:57:52.828Z",
-    "updated_at": "2026-11-19T19:57:52.833Z"
-  }
-},
-{
-  "model": "catalog.product",
-  "pk": 3,
-  "fields": {
-    "category": 3,
-    "name": "Girls Floral Party Frock",
-    "slug": "rf-003",
-    "sku": "RF-003",
-    "description": "Girls Floral Party Frock - Net fabric, perfect for party occasions.",
-    "short_description": "",
-    "price": "1299.00",
-    "original_price": "1999.00",
-    "image": "products/product-3.avif",
-    "fabric": "Net",
-    "occasion": "Party",
-    "age_group": "kids",
-    "is_new": true,
-    "is_featured": false,
-    "is_active": true,
-    "created_at": "2026-11-19T19:57:52.843Z",
-    "updated_at": "2026-11-19T19:57:52.846Z"
-  }
-},
-{
-  "model": "catalog.product",
-  "pk": 4,
-  "fields": {
-    "category": 4,
-    "name": "Cotton Printed Kurti",
-    "slug": "rf-004",
-    "sku": "RF-004",
-    "description": "Cotton Printed Kurti - Cotton fabric, perfect for casual occasions.",
-    "short_description": "",
-    "price": "899.00",
-    "original_price": "1499.00",
-    "image": "products/product-4.webp",
-    "fabric": "Cotton",
-    "occasion": "Casual",
-    "age_group": "teens",
-    "is_new": false,
-    "is_featured": false,
-    "is_active": true,
-    "created_at": "2026-11-19T19:57:52.862Z",
-    "updated_at": "2026-11-19T19:57:52.867Z"
-  }
-},
-{
-  "model": "catalog.product",
-  "pk": 5,
-  "fields": {
-    "category": 5,
-    "name": "Maroon Festive Gown",
-    "slug": "rf-005",
-    "sku": "RF-005",
-    "description": "Maroon Festive Gown - Georgette fabric, perfect for festive occasions.",
-    "short_description": "",
-    "price": "2899.00",
-    "original_price": "3999.00",
-    "image": "products/product-5.jpg",
-    "fabric": "Georgette",
-    "occasion": "Festive",
-    "age_group": "women",
-    "is_new": true,
-    "is_featured": true,
-    "is_active": true,
-    "created_at": "2026-11-19T19:57:52.882Z",
-    "updated_at": "2026-11-19T19:57:52.885Z"
-  }
-},
-{
-  "model": "catalog.product",
-  "pk": 6,
-  "fields": {
-    "category": 6,
-    "name": "Rose Gold Designer Lehenga",
-    "slug": "rf-006",
-    "sku": "RF-006",
-    "description": "Rose Gold Designer Lehenga - Silk fabric, perfect for wedding occasions.",
-    "short_description": "",
-    "price": "5999.00",
-    "original_price": "7999.00",
-    "image": "",
-    "fabric": "Silk",
-    "occasion": "Wedding",
-    "age_group": "women",
-    "is_new": false,
-    "is_featured": true,
-    "is_active": true,
-    "created_at": "2026-11-19T19:57:52.896Z",
-    "updated_at": "2026-11-19T19:57:52.896Z"
-  }
-},
-{
-  "model": "catalog.product",
-  "pk": 7,
-  "fields": {
-    "category": 1,
-    "name": "Georgette Designer Saree",
-    "slug": "rf-007",
-    "sku": "RF-007",
-    "description": "Georgette Designer Saree - Georgette fabric, perfect for party occasions.",
-    "short_description": "",
-    "price": "2599.00",
-    "original_price": "3499.00",
-    "image": "",
-    "fabric": "Georgette",
-    "occasion": "Party",
-    "age_group": "women",
-    "is_new": true,
-    "is_featured": true,
-    "is_active": true,
-    "created_at": "2026-11-19T19:57:52.907Z",
-    "updated_at": "2026-11-19T19:57:52.907Z"
-  }
-},
-{
-  "model": "catalog.product",
-  "pk": 8,
-  "fields": {
-    "category": 3,
-    "name": "Girls Cotton Cas",
-    "slug": "rf-008",
-    "sku": "RF-008",
-    "description": "Girls Cotton Casual Frock - Cotton fabric, perfect for casual occassion",
-    "short_description": "",
-    "price": "799.00",
-    "original_price": "1199.00",
-    "image": "products/product-8.webp",
-    "fabric": "Cotton",
-    "occasion": "Casual",
-    "age_group": "kids",
-    "is_new": false,
-    "is_featured": true,
-    "is_active": true,
-    "created_at": "2026-11-19T19:57:52.911Z",
-    "updated_at": "2026-11-20T03:50:58.597Z"
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 1,
-  "fields": {
-    "product": 1,
-    "size": "Free Size",
-    "color": "Pink",
-    "sku": "RF-001-1",
-    "stock": 12,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 2,
-  "fields": {
-    "product": 2,
-    "size": "S",
-    "color": "Cream",
-    "sku": "RF-002-1",
-    "stock": 11,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 3,
-  "fields": {
-    "product": 2,
-    "size": "M",
-    "color": "Cream",
-    "sku": "RF-002-2",
-    "stock": 14,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 4,
-  "fields": {
-    "product": 2,
-    "size": "L",
-    "color": "Cream",
-    "sku": "RF-002-3",
-    "stock": 16,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 5,
-  "fields": {
-    "product": 2,
-    "size": "XL",
-    "color": "Cream",
-    "sku": "RF-002-4",
-    "stock": 15,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 6,
-  "fields": {
-    "product": 3,
-    "size": "2-3Y",
-    "color": "Pink",
-    "sku": "RF-003-1",
-    "stock": 12,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 7,
-  "fields": {
-    "product": 3,
-    "size": "4-5Y",
-    "color": "Pink",
-    "sku": "RF-003-2",
-    "stock": 11,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 8,
-  "fields": {
-    "product": 3,
-    "size": "6-7Y",
-    "color": "Pink",
-    "sku": "RF-003-3",
-    "stock": 14,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 9,
-  "fields": {
-    "product": 3,
-    "size": "8-9Y",
-    "color": "Pink",
-    "sku": "RF-003-4",
-    "stock": 15,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 10,
-  "fields": {
-    "product": 4,
-    "size": "XS",
-    "color": "Blue",
-    "sku": "RF-004-1",
-    "stock": 12,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 11,
-  "fields": {
-    "product": 4,
-    "size": "S",
-    "color": "Blue",
-    "sku": "RF-004-2",
-    "stock": 14,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 12,
-  "fields": {
-    "product": 4,
-    "size": "M",
-    "color": "Blue",
-    "sku": "RF-004-3",
-    "stock": 14,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 13,
-  "fields": {
-    "product": 4,
-    "size": "L",
-    "color": "Blue",
-    "sku": "RF-004-4",
-    "stock": 15,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 14,
-  "fields": {
-    "product": 5,
-    "size": "S",
-    "color": "Maroon",
-    "sku": "RF-005-1",
-    "stock": 14,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 15,
-  "fields": {
-    "product": 5,
-    "size": "M",
-    "color": "Maroon",
-    "sku": "RF-005-2",
-    "stock": 14,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 16,
-  "fields": {
-    "product": 5,
-    "size": "L",
-    "color": "Maroon",
-    "sku": "RF-005-3",
-    "stock": 13,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 17,
-  "fields": {
-    "product": 5,
-    "size": "XL",
-    "color": "Maroon",
-    "sku": "RF-005-4",
-    "stock": 12,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 18,
-  "fields": {
-    "product": 6,
-    "size": "S",
-    "color": "Rose Gold",
-    "sku": "RF-006-1",
-    "stock": 10,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 19,
-  "fields": {
-    "product": 6,
-    "size": "M",
-    "color": "Rose Gold",
-    "sku": "RF-006-2",
-    "stock": 14,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 20,
-  "fields": {
-    "product": 6,
-    "size": "L",
-    "color": "Rose Gold",
-    "sku": "RF-006-3",
-    "stock": 9,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 21,
-  "fields": {
-    "product": 7,
-    "size": "Free Size",
-    "color": "Purple",
-    "sku": "RF-007-1",
-    "stock": 7,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 22,
-  "fields": {
-    "product": 8,
-    "size": "2-3Y",
-    "color": "Yellow",
-    "sku": "RF-008-1",
-    "stock": 8,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 23,
-  "fields": {
-    "product": 8,
-    "size": "4-5Y",
-    "color": "Yellow",
-    "sku": "RF-008-2",
-    "stock": 6,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 24,
-  "fields": {
-    "product": 8,
-    "size": "6-7Y",
-    "color": "Yellow",
-    "sku": "RF-008-3",
-    "stock": 6,
-    "is_active": true
-  }
-},
-{
-  "model": "catalog.productvariant",
-  "pk": 25,
-  "fields": {
-    "product": 8,
-    "size": "8-9Y",
-    "color": "Yellow",
-    "sku": "RF-008-4",
-    "stock": 7,
-    "is_active": true
-  }
-},
-{
-  "model": "core.websitesettings",
-  "pk": 1,
-  "fields": {
-    "site_name": "ROSÉVA",
-    "logo": "",
-    "favicon": "",
-    "email": "support@example.com",
-    "phone": "",
-    "whatsapp": "",
-    "address": "India",
-    "instagram_url": "https://instagram.com",
-    "facebook_url": "https://facebook.com",
-    "currency_symbol": "₹",
-    "brand_tagline": "FASHION",
-    "top_bar_message": "Free shipping on orders above ₹999",
-    "footer_description": "Discover timeless elegance, beautiful ethnic wear, and modern styles for girls and women.",
-    "footer_bottom_text": "Made with love for beautiful fashion.",
-    "search_placeholder": "Search sarees, frocks, kurtis..."
-  }
-},
-{
-  "model": "core.navigationlink",
-  "pk": 1,
-  "fields": {
-    "title": "New Arrivals",
-    "url": "/shop?sort=newest",
-    "display_order": 0,
-    "is_active": true
-  }
-},
-{
-  "model": "core.navigationlink",
-  "pk": 2,
-  "fields": {
-    "title": "Sarees",
-    "url": "/shop?category=sarees",
-    "display_order": 1,
-    "is_active": true
-  }
-},
-{
-  "model": "core.navigationlink",
-  "pk": 3,
-  "fields": {
-    "title": "Salwar Suits",
-    "url": "/shop?category=salwar",
-    "display_order": 2,
-    "is_active": true
-  }
-},
-{
-  "model": "core.navigationlink",
-  "pk": 4,
-  "fields": {
-    "title": "Frocks",
-    "url": "/shop?category=frocks",
-    "display_order": 3,
-    "is_active": true
-  }
-},
-{
-  "model": "core.navigationlink",
-  "pk": 5,
-  "fields": {
-    "title": "Kurtis",
-    "url": "/shop?category=kurtis",
-    "display_order": 4,
-    "is_active": true
-  }
-},
-{
-  "model": "core.navigationlink",
-  "pk": 6,
-  "fields": {
-    "title": "Gowns",
-    "url": "/shop?category=gowns",
-    "display_order": 5,
-    "is_active": true
-  }
-},
-{
-  "model": "core.navigationlink",
-  "pk": 7,
-  "fields": {
-    "title": "Lehengas",
-    "url": "/shop?category=lehengas",
-    "display_order": 6,
-    "is_active": true
-  }
-},
-{
-  "model": "core.navigationlink",
-  "pk": 8,
-  "fields": {
-    "title": "Sale",
-    "url": "/shop?sort=discount",
-    "display_order": 7,
-    "is_active": true
-  }
-},
-{
-  "model": "core.herobanner",
-  "pk": 1,
-  "fields": {
-    "eyebrow": "THE WEDDING EDIT",
-    "title": "Celebrate Every Beautiful Moment 2026",
-    "subtitle": "Elegant sarees and suits for every celebration.",
-    "image": "banners/hero-wedding.jpeg",
-    "button_text": "Shop Collection",
-    "button_link": "/shop?occasion=Wedding",
-    "overlay_opacity": 0.35,
-    "text_alignment": "left",
-    "display_order": 0,
-    "is_active": true
-  }
-},
-{
-  "model": "core.herobanner",
-  "pk": 2,
-  "fields": {
-    "eyebrow": "TIMELESS ELEGANCE",
-    "title": "Draped in Grace",
-    "subtitle": "Discover our exquisite saree collection.",
-    "image": "banners/hero-saree.jpeg",
-    "button_text": "Shop Collection",
-    "button_link": "/shop?category=sarees",
-    "overlay_opacity": 0.35,
-    "text_alignment": "left",
-    "display_order": 1,
-    "is_active": true
-  }
-},
-{
-  "model": "core.herobanner",
-  "pk": 3,
-  "fields": {
-    "eyebrow": "LITTLE FASHION STORIES",
-    "title": "Made for Little Princesses",
-    "subtitle": "Adorable frocks for every special occasion.",
-    "image": "banners/hero-frocks.jpeg",
-    "button_text": "Shop Collection",
-    "button_link": "/shop?category=frocks",
-    "overlay_opacity": 0.35,
-    "text_alignment": "left",
-    "display_order": 2,
-    "is_active": true
-  }
-},
-{
-  "model": "core.benefititem",
-  "pk": 1,
-  "fields": {
-    "text": "Free Shipping Above ₹1999",
-    "icon": "truck",
-    "display_order": 0,
-    "is_active": true
-  }
-},
-{
-  "model": "core.benefititem",
-  "pk": 2,
-  "fields": {
-    "text": "Secure Shopping",
-    "icon": "shield",
-    "display_order": 1,
-    "is_active": true
-  }
-},
-{
-  "model": "core.benefititem",
-  "pk": 3,
-  "fields": {
-    "text": "Easy Returns*",
-    "icon": "refresh",
-    "display_order": 2,
-    "is_active": true
-  }
-},
-{
-  "model": "core.benefititem",
-  "pk": 4,
-  "fields": {
-    "text": "Curated Fashion",
-    "icon": "sparkles",
-    "display_order": 3,
-    "is_active": true
-  }
-},
-{
-  "model": "core.homepagesection",
-  "pk": 1,
-  "fields": {
-    "section_key": "categories",
-    "display_order": 0,
-    "eyebrow": "EXPLORE OUR BEAUTIFUL COLLECTIONS",
-    "title": "Shop by Category",
-    "description": "Beautiful styles for every age and every occasion.",
-    "button_text": "Explore Collection",
-    "button_link": "/shop",
-    "is_active": true
-  }
-},
-{
-  "model": "core.homepagesection",
-  "pk": 2,
-  "fields": {
-    "section_key": "new_arrivals",
-    "display_order": 1,
-    "eyebrow": "FRESHLY CURATED",
-    "title": "New Arrivals",
-    "description": "Discover the latest styles you'll fall in love with.",
-    "button_text": "View All Products",
-    "button_link": "/shop?sort=newest",
-    "is_active": true
-  }
-},
-{
-  "model": "core.homepagesection",
-  "pk": 3,
-  "fields": {
-    "section_key": "featured",
-    "display_order": 2,
-    "eyebrow": "HANDPICKED FOR YOU",
-    "title": "Our Featured Collection",
-    "description": "Discover timeless outfits and beautiful everyday styles.",
-    "button_text": "",
-    "button_link": "",
-    "is_active": true
-  }
-},
-{
-  "model": "core.homepagesection",
-  "pk": 4,
-  "fields": {
-    "section_key": "newsletter",
-    "display_order": 3,
-    "eyebrow": "THE ROSÉVA EDIT",
-    "title": "Style That Tells Your Story",
-    "description": "Explore elegant ethnic fashion for women, teens, and little girls.",
-    "button_text": "Shop All Collections",
-    "button_link": "/shop",
-    "is_active": true
-  }
-},
-{
-  "model": "core.promobanner",
-  "pk": 1,
-  "fields": {
-    "eyebrow": "SPECIAL OCCASION EDIT",
-    "title": "Elegance for Every Celebration",
-    "description": "From wedding celebrations to festive gatherings, discover outfits made for unforgettable moments.",
-    "image": "",
-    "button_text": "Explore Wedding Edit",
-    "button_link": "/shop?occasion=Wedding",
-    "is_active": true
-  }
-},
-{
-  "model": "core.footergroup",
-  "pk": 1,
-  "fields": {
-    "title": "Quick Links",
-    "display_order": 0,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footergroup",
-  "pk": 2,
-  "fields": {
-    "title": "Collections",
-    "display_order": 1,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footergroup",
-  "pk": 3,
-  "fields": {
-    "title": "Customer Care",
-    "display_order": 2,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 1,
-  "fields": {
-    "group": 1,
-    "title": "Home",
-    "url": "/",
-    "display_order": 0,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 2,
-  "fields": {
-    "group": 1,
-    "title": "Shop All",
-    "url": "/shop",
-    "display_order": 1,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 3,
-  "fields": {
-    "group": 1,
-    "title": "Wishlist",
-    "url": "/wishlist",
-    "display_order": 2,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 4,
-  "fields": {
-    "group": 1,
-    "title": "Shopping Cart",
-    "url": "/cart",
-    "display_order": 3,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 5,
-  "fields": {
-    "group": 2,
-    "title": "Saree",
-    "url": "/shop?category=sarees",
-    "display_order": 0,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 6,
-  "fields": {
-    "group": 2,
-    "title": "Salwar Suits",
-    "url": "/shop?category=salwar",
-    "display_order": 1,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 7,
-  "fields": {
-    "group": 2,
-    "title": "Frocks",
-    "url": "/shop?category=frocks",
-    "display_order": 2,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 8,
-  "fields": {
-    "group": 2,
-    "title": "Kurtis",
-    "url": "/shop?category=kurtis",
-    "display_order": 3,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 9,
-  "fields": {
-    "group": 2,
-    "title": "Lehengas",
-    "url": "/shop?category=lehengas",
-    "display_order": 4,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 10,
-  "fields": {
-    "group": 3,
-    "title": "Track Order",
-    "url": "/track-order",
-    "display_order": 0,
-    "is_active": true
-  }
-},
-{
-  "model": "core.footerlink",
-  "pk": 11,
-  "fields": {
-    "group": 3,
-    "title": "Contact Support",
-    "url": "mailto:support@example.com",
-    "display_order": 1,
-    "is_active": true
-  }
-}
 ]
