@@ -10,31 +10,39 @@ export function getImageUrl(image) {
       ? image
       : image.url || image.image || "";
 
-  if (typeof value !== "string" || !value) {
+  if (typeof value !== "string" || !value.trim()) {
     return "";
   }
 
-  // Absolute URLs: Cloudinary, Render, etc.
-  if (/^https?:\/\//i.test(value)) {
-    // Handle legacy Render media URLs
-    // only if a matching local static file exists.
-    const url = new URL(value);
+  const imagePath = value.trim();
 
-    if (
-      url.hostname === "roseva-fashion.onrender.com" &&
-      url.pathname.startsWith("/media/")
-    ) {
-      return `/images/${url.pathname.slice(7)}`;
+  // Cloudinary or other external image URLs
+  if (/^https?:\/\//i.test(imagePath)) {
+    try {
+      const url = new URL(imagePath);
+
+      // Existing Django media paths refer to files
+      // that are currently available in React public/images.
+      if (
+        url.hostname === "roseva-fashion.onrender.com" &&
+        url.pathname.startsWith("/images/")
+      ) {
+        return `/images/${url.pathname.slice(7)}`;
+      }
+
+      return imagePath;
+    } catch {
+      return "";
     }
-
-    return value;
   }
 
-  if (value.startsWith("data:")) {
-    return value;
+  // Existing static files
+  if (imagePath.startsWith("/images/")) {
+    return imagePath;
   }
 
-  const path = value
+  // Django media file paths
+  const path = imagePath
     .replace(/^\/+/, "")
     .replace(/^media\//, "")
     .replace(/^images\//, "");
@@ -45,5 +53,5 @@ export function getImageUrl(image) {
     return `/images/${path}`;
   }
 
-  return `${BACKEND_URL}/${value.replace(/^\/+/, "")}`;
+  return `${BACKEND_URL}/${imagePath.replace(/^\/+/, "")}`;
 }
