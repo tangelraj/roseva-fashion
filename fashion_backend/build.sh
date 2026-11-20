@@ -8,6 +8,6 @@ python manage.py collectstatic --noinput
 
 python manage.py migrate --noinput
 
-if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
-    python manage.py create_render_admin
+if [ "$IMPORT_INITIAL_DATA" = "true" ]; then
+    python manage.py import_production_data
 fi
