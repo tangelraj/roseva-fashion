@@ -14,37 +14,82 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ==========================================
+# HELPER FUNCTIONS
+# ==========================================
+
+def get_env_bool(name, default=False):
+    value = os.environ.get(
+        name,
+        str(default)
+    )
+
+    return value.strip().lower() in (
+        "true",
+        "1",
+        "yes",
+        "on",
+    )
+
+
+def get_env_list(name, default=""):
+    value = os.environ.get(name, default)
+
+    return [
+        item.strip()
+        for item in value.split(",")
+        if item.strip()
+    ]
+
+
+# ==========================================
 # SECURITY SETTINGS
 # ==========================================
 
-# Use a separate SECRET_KEY in production.
+DEBUG = get_env_bool("DEBUG", True)
+
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
-    "django-insecure-local-development-only-change-me",
+    ""
+).strip()
+
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = (
+            "django-insecure-"
+            "local-development-only-change-me"
+        )
+    else:
+        raise RuntimeError(
+            "SECRET_KEY environment variable "
+            "is required in production."
+        )
+
+if not DEBUG and SECRET_KEY.startswith(
+    "django-insecure-"
+):
+    raise RuntimeError(
+        "Use a secure SECRET_KEY in production."
+    )
+
+
+# ==========================================
+# ALLOWED HOSTS
+# ==========================================
+
+ALLOWED_HOSTS = get_env_list(
+    "ALLOWED_HOSTS",
+    "127.0.0.1,localhost"
 )
 
-DEBUG = os.environ.get(
-    "DEBUG",
-    "True",
-).strip().lower() == "true"
+# Render provides the service hostname.
+render_hostname = os.environ.get(
+    "RENDER_EXTERNAL_HOSTNAME",
+    ""
+).strip()
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.environ.get(
-        "ALLOWED_HOSTS",
-        "127.0.0.1,localhost",
-    ).split(",")
-    if host.strip()
-]
-
-if not DEBUG:
-    if (
-        not os.environ.get("SECRET_KEY")
-        or SECRET_KEY.startswith("django-insecure-")
-    ):
-        raise RuntimeError(
-            "Set a secure SECRET_KEY before deployment."
-        )
+if render_hostname:
+    if render_hostname not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(render_hostname)
 
 
 # ==========================================
@@ -113,7 +158,10 @@ ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "BACKEND": (
+            "django.template.backends."
+            "django.DjangoTemplates"
+        ),
 
         "DIRS": [],
 
@@ -143,19 +191,32 @@ WSGI_APPLICATION = "config.wsgi.application"
 # ==========================================
 
 # Local development: SQLite
-# Render production: PostgreSQL using DATABASE_URL
+# Render production: PostgreSQL
+
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    ""
+).strip()
+
+if not DEBUG and not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL is required in production. "
+        "Configure a persistent PostgreSQL database."
+    )
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        default=(
+            f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+        ),
         conn_max_age=600,
         conn_health_checks=True,
         ssl_require=(
-            bool(os.environ.get("DATABASE_URL"))
-            and os.environ.get(
+            bool(DATABASE_URL)
+            and get_env_bool(
                 "DATABASE_SSL_REQUIRE",
-                "False",
-            ).lower() == "true"
+                False
+            )
         ),
     )
 }
@@ -214,26 +275,6 @@ STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-STORAGES = {
-    # Uploaded product images, category images,
-    # and other Django media files
-    "default": {
-        "BACKEND": (
-            "django.core.files.storage."
-            "FileSystemStorage"
-        ),
-    },
-
-    # Django admin CSS, JavaScript,
-    # and other static files
-    "staticfiles": {
-        "BACKEND": (
-            "whitenoise.storage."
-            "CompressedManifestStaticFilesStorage"
-        ),
-    },
-}
-
 
 # ==========================================
 # MEDIA FILES
@@ -245,20 +286,42 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 # ==========================================
+# FILE STORAGE
+# ==========================================
+
+STORAGES = {
+    # Product images, category images,
+    # and other uploaded files
+    "default": {
+        "BACKEND": (
+            "django.core.files.storage."
+            "FileSystemStorage"
+        ),
+    },
+
+    # Django admin static files
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage."
+            "CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
+
+
+# ==========================================
 # CORS SETTINGS
 # ==========================================
 
-# React frontend origins
 CORS_ALLOWED_ORIGINS = [
-    origin.strip().rstrip("/")
-    for origin in os.environ.get(
+    origin.rstrip("/")
+    for origin in get_env_list(
         "CORS_ALLOWED_ORIGINS",
         (
             "http://localhost:5173,"
             "http://127.0.0.1:5173"
         ),
-    ).split(",")
-    if origin.strip()
+    )
 ]
 
 
@@ -267,15 +330,14 @@ CORS_ALLOWED_ORIGINS = [
 # ==========================================
 
 CSRF_TRUSTED_ORIGINS = [
-    origin.strip().rstrip("/")
-    for origin in os.environ.get(
+    origin.rstrip("/")
+    for origin in get_env_list(
         "CSRF_TRUSTED_ORIGINS",
         (
             "http://localhost:5173,"
             "http://127.0.0.1:5173"
         ),
-    ).split(",")
-    if origin.strip()
+    )
 ]
 
 
@@ -285,8 +347,14 @@ CSRF_TRUSTED_ORIGINS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        (
+            "rest_framework.authentication."
+            "SessionAuthentication"
+        ),
+        (
+            "rest_framework_simplejwt."
+            "authentication.JWTAuthentication"
+        ),
     ],
 
     "DEFAULT_PERMISSION_CLASSES": [
@@ -318,8 +386,8 @@ SIMPLE_JWT = {
 # EMAIL CONFIGURATION
 # ==========================================
 
-# Local default: display emails in terminal.
-# Set EMAIL_BACKEND to SMTP to send real emails.
+# Local default: print emails in terminal.
+# Render: configure SMTP environment variables.
 
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND",
@@ -332,25 +400,27 @@ EMAIL_HOST = os.environ.get(
 )
 
 EMAIL_PORT = int(
-    os.environ.get("EMAIL_PORT", "587")
+    os.environ.get(
+        "EMAIL_PORT",
+        "587"
+    )
 )
 
-EMAIL_USE_TLS = os.environ.get(
+EMAIL_USE_TLS = get_env_bool(
     "EMAIL_USE_TLS",
-    "True",
-).lower() == "true"
+    True
+)
 
 EMAIL_USE_SSL = False
 
 EMAIL_HOST_USER = os.environ.get(
     "EMAIL_HOST_USER",
-    "tangelraj@gmail.com",
+    ""
 )
 
-# Never hardcode your Gmail App Password.
 EMAIL_HOST_PASSWORD = os.environ.get(
     "EMAIL_HOST_PASSWORD",
-    "zrmp zlpk ifyj hfol",
+    ""
 )
 
 DEFAULT_FROM_EMAIL = os.environ.get(
@@ -381,10 +451,10 @@ CSRF_COOKIE_SECURE = not DEBUG
 
 SECURE_SSL_REDIRECT = (
     not DEBUG
-    and os.environ.get(
+    and get_env_bool(
         "SECURE_SSL_REDIRECT",
-        "True",
-    ).lower() == "true"
+        True
+    )
 )
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
