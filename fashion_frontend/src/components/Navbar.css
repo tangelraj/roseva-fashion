@@ -1,0 +1,237 @@
+
+.roseva-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #fff;
+  border-bottom: 1px solid #f0e4e9;
+}
+
+.roseva-topbar {
+  background: #8d3658;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  padding: 9px 15px;
+  letter-spacing: 0.4px;
+}
+
+.roseva-navbar {
+  max-width: 1400px;
+  margin: auto;
+  min-height: 78px;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.roseva-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #8d3658;
+  text-decoration: none;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.roseva-logo span {
+  font-size: 10px;
+  letter-spacing: 5px;
+  margin-top: 5px;
+}
+
+.roseva-desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.roseva-nav-link {
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.roseva-nav-link:hover,
+.roseva-nav-link.active {
+  color: #9b4265;
+}
+
+.roseva-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.roseva-icon-link {
+  position: relative;
+  color: #333;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roseva-icon-link:hover {
+  color: #9b4265;
+}
+
+.roseva-nav-count {
+  position: absolute;
+  top: -9px;
+  right: -11px;
+  background: #9b4265;
+  color: white;
+  font-size: 10px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 3px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roseva-account-dropdown {
+  position: relative;
+}
+
+.roseva-account-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 190px;
+  background: white;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.roseva-account-dropdown:hover .roseva-account-menu,
+.roseva-account-dropdown:focus-within .roseva-account-menu {
+  display: flex;
+}
+
+.roseva-account-name {
+  font-weight: 600;
+  color: #8d3658;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  margin: 0;
+}
+
+.roseva-account-menu a,
+.roseva-account-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  padding: 10px;
+  color: #333;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.roseva-account-menu a:hover,
+.roseva-account-menu button:hover {
+  background: #fff3f7;
+  color: #9b4265;
+}
+
+.roseva-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+}
+
+.roseva-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .roseva-desktop-nav {
+    display: none;
+  }
+
+  .roseva-mobile-toggle {
+    display: inline-flex;
+  }
+
+  .roseva-navbar {
+    min-height: 68px;
+    padding: 0 18px;
+  }
+
+  .roseva-nav-actions {
+    gap: 15px;
+  }
+
+  .roseva-mobile-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 22px 25px;
+    border-top: 1px solid #eee;
+    background: #fff;
+  }
+
+  .roseva-mobile-nav a,
+  .roseva-mobile-nav button {
+    display: block;
+    width: 100%;
+    padding: 12px 0;
+    color: #333;
+    text-decoration: none;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #f4edf0;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .roseva-mobile-nav a:hover,
+  .roseva-mobile-nav button:hover {
+    color: #9b4265;
+  }
+
+  .roseva-account-dropdown {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .roseva-logo {
+    font-size: 21px;
+    letter-spacing: 2px;
+  }
+
+  .roseva-logo span {
+    font-size: 8px;
+    letter-spacing: 3px;
+  }
+
+  .roseva-navbar {
+    padding: 0 12px;
+  }
+
+  .roseva-nav-actions {
+    gap: 12px;
+  }
+}

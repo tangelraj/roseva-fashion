@@ -1,0 +1,72 @@
+
+.roseva-marquee {
+  width: 100%;
+  overflow: hidden;
+  background: #ffffff;
+  border-top: 1px solid #ead9d4;
+  border-bottom: 1px solid #ead9d4;
+  padding: 18px 0;
+}
+
+.roseva-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: rosevaMarqueeScroll 20s linear infinite;
+  will-change: transform;
+}
+
+.roseva-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.roseva-marquee-item {
+  display: flex;
+  flex: 0 0 300px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 25px;
+  white-space: nowrap;
+  color: #382b2e;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.roseva-marquee-item svg {
+  flex-shrink: 0;
+  color: #b76e79;
+}
+
+@keyframes rosevaMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .roseva-marquee {
+    padding: 14px 0;
+  }
+
+  .roseva-marquee-item {
+    flex-basis: 250px;
+    font-size: 16px;
+    padding: 0 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roseva-marquee-track {
+    animation: none;
+  }
+
+  .roseva-marquee {
+    overflow-x: auto;
+  }
+}
