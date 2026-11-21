@@ -10,22 +10,15 @@ import {
 } from "../services/api";
 
 import ProductCard from "../components/ProductCard";
-import { getImageUrl } from "../utils/imageUrl";
+import { getProductImage } from "../utils/imageUrl";
 
-// Normalize products received from Django
+// Convert Django product data into frontend format
 function normalizeProduct(product) {
-  const rawImage =
-    product.image ||
-    product.image_url ||
-    product.primary_image ||
-    product.images?.[0]?.image ||
-    product.images?.[0]?.url ||
-    "";
-
   return {
     ...product,
 
-    image: getImageUrl(rawImage),
+    // Assign the correct image to each product
+    image: getProductImage(product),
 
     price: Number(product.price ?? 0),
 
@@ -54,7 +47,7 @@ export default function Shop() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // URL filters
+  // Read filters from URL
   const category = params.get("category") || "";
   const fabric = params.get("fabric") || "";
   const age = params.get("age") || "";
@@ -66,7 +59,7 @@ export default function Shop() {
     params.get("maxPrice") || 10000
   );
 
-  // Load Django products and categories
+  // Fetch products and categories from Django
   useEffect(() => {
     let cancelled = false;
 
@@ -82,13 +75,18 @@ export default function Shop() {
 
         if (cancelled) return;
 
+        // Support normal arrays and paginated API responses
         const productList = Array.isArray(productData)
           ? productData
-          : productData?.results || [];
+          : Array.isArray(productData?.results)
+          ? productData.results
+          : [];
 
         const categoryList = Array.isArray(categoryData)
           ? categoryData
-          : categoryData?.results || [];
+          : Array.isArray(categoryData?.results)
+          ? categoryData.results
+          : [];
 
         const normalizedProducts =
           productList.map(normalizeProduct);
@@ -129,12 +127,12 @@ export default function Shop() {
     };
   }, []);
 
-  // Update URL query parameters
+  // Update filter in URL
   const updateFilter = (key, value) => {
     const next = new URLSearchParams(params);
 
-    if (value) {
-      next.set(key, value);
+    if (value !== "" && value != null) {
+      next.set(key, String(value));
     } else {
       next.delete(key);
     }
@@ -153,33 +151,57 @@ export default function Shop() {
           ? product.category?.slug
           : product.category;
 
+      const matchesCategory =
+        !category || productCategory === category;
+
+      const matchesFabric =
+        !fabric || material === fabric;
+
+      const matchesAge =
+        !age || product.ageGroup === age;
+
+      const matchesOccasion =
+        !occasion || product.occasion === occasion;
+
+      const matchesPrice =
+        product.price <= maxPrice;
+
+      const matchesSearch =
+        !search ||
+        name.toLowerCase().includes(
+          search.toLowerCase()
+        ) ||
+        material.toLowerCase().includes(
+          search.toLowerCase()
+        );
+
       return (
-        (!category || productCategory === category) &&
-        (!fabric || material === fabric) &&
-        (!age || product.ageGroup === age) &&
-        (!occasion || product.occasion === occasion) &&
-        product.price <= maxPrice &&
-        (!search ||
-          name
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          material
-            .toLowerCase()
-            .includes(search.toLowerCase()))
+        matchesCategory &&
+        matchesFabric &&
+        matchesAge &&
+        matchesOccasion &&
+        matchesPrice &&
+        matchesSearch
       );
     });
 
     if (sort === "price-low") {
       result.sort((a, b) => a.price - b.price);
-    } else if (sort === "price-high") {
+    }
+
+    if (sort === "price-high") {
       result.sort((a, b) => b.price - a.price);
-    } else if (sort === "newest") {
+    }
+
+    if (sort === "newest") {
       result.sort(
         (a, b) =>
           Number(b.isNew) - Number(a.isNew)
       );
-    } else if (sort === "discount") {
-      const discount = (product) => {
+    }
+
+    if (sort === "discount") {
+      const getDiscount = (product) => {
         if (
           !product.originalPrice ||
           product.originalPrice <= product.price
@@ -194,7 +216,8 @@ export default function Shop() {
       };
 
       result.sort(
-        (a, b) => discount(b) - discount(a)
+        (a, b) =>
+          getDiscount(b) - getDiscount(a)
       );
     }
 
@@ -210,25 +233,27 @@ export default function Shop() {
     maxPrice,
   ]);
 
-  const fabrics = useMemo(
-    () =>
-      [
-        ...new Set(
-          products.map((p) => p.fabric).filter(Boolean)
-        ),
-      ].sort(),
-    [products]
-  );
+  // Available fabrics
+  const fabrics = useMemo(() => {
+    return [
+      ...new Set(
+        products
+          .map((product) => product.fabric)
+          .filter(Boolean)
+      ),
+    ].sort();
+  }, [products]);
 
-  const occasions = useMemo(
-    () =>
-      [
-        ...new Set(
-          products.map((p) => p.occasion).filter(Boolean)
-        ),
-      ].sort(),
-    [products]
-  );
+  // Available occasions
+  const occasions = useMemo(() => {
+    return [
+      ...new Set(
+        products
+          .map((product) => product.occasion)
+          .filter(Boolean)
+      ),
+    ].sort();
+  }, [products]);
 
   return (
     <main className="shop-page section-container">
@@ -251,7 +276,7 @@ export default function Shop() {
           type="button"
           className="outline-button mobile-filter-button"
           onClick={() =>
-            setShowFilters(!showFilters)
+            setShowFilters((previous) => !previous)
           }
         >
           <SlidersHorizontal size={18} />
@@ -266,13 +291,15 @@ export default function Shop() {
 
         <select
           value={sort}
-          onChange={(e) =>
-            updateFilter("sort", e.target.value)
+          onChange={(event) =>
+            updateFilter("sort", event.target.value)
           }
           aria-label="Sort products"
         >
           <option value="">Featured</option>
-          <option value="newest">New Arrivals</option>
+          <option value="newest">
+            New Arrivals
+          </option>
           <option value="price-low">
             Price: Low to High
           </option>
@@ -307,16 +334,19 @@ export default function Shop() {
             </button>
           </div>
 
-          {/* CATEGORY */}
+          {/* CATEGORY FILTER */}
           <div className="filter-group">
-            <label>Dress Category</label>
+            <label htmlFor="shop-category">
+              Dress Category
+            </label>
 
             <select
+              id="shop-category"
               value={category}
-              onChange={(e) =>
+              onChange={(event) =>
                 updateFilter(
                   "category",
-                  e.target.value
+                  event.target.value
                 )
               }
             >
@@ -335,16 +365,19 @@ export default function Shop() {
             </select>
           </div>
 
-          {/* FABRIC */}
+          {/* FABRIC FILTER */}
           <div className="filter-group">
-            <label>Cloth Material</label>
+            <label htmlFor="shop-fabric">
+              Cloth Material
+            </label>
 
             <select
+              id="shop-fabric"
               value={fabric}
-              onChange={(e) =>
+              onChange={(event) =>
                 updateFilter(
                   "fabric",
-                  e.target.value
+                  event.target.value
                 )
               }
             >
@@ -363,16 +396,19 @@ export default function Shop() {
             </select>
           </div>
 
-          {/* AGE */}
+          {/* AGE GROUP FILTER */}
           <div className="filter-group">
-            <label>Age Group</label>
+            <label htmlFor="shop-age">
+              Age Group
+            </label>
 
             <select
+              id="shop-age"
               value={age}
-              onChange={(e) =>
+              onChange={(event) =>
                 updateFilter(
                   "age",
-                  e.target.value
+                  event.target.value
                 )
               }
             >
@@ -394,16 +430,19 @@ export default function Shop() {
             </select>
           </div>
 
-          {/* OCCASION */}
+          {/* OCCASION FILTER */}
           <div className="filter-group">
-            <label>Occasion</label>
+            <label htmlFor="shop-occasion">
+              Occasion
+            </label>
 
             <select
+              id="shop-occasion"
               value={occasion}
-              onChange={(e) =>
+              onChange={(event) =>
                 updateFilter(
                   "occasion",
-                  e.target.value
+                  event.target.value
                 )
               }
             >
@@ -422,29 +461,30 @@ export default function Shop() {
             </select>
           </div>
 
-          {/* PRICE */}
+          {/* PRICE FILTER */}
           <div className="filter-group">
-            <label>
+            <label htmlFor="shop-max-price">
               Maximum Price: ₹
               {maxPrice.toLocaleString("en-IN")}
             </label>
 
             <input
+              id="shop-max-price"
               type="range"
               min="500"
               max="10000"
               step="100"
               value={maxPrice}
-              onChange={(e) =>
+              onChange={(event) =>
                 updateFilter(
                   "maxPrice",
-                  e.target.value
+                  event.target.value
                 )
               }
             />
           </div>
 
-          {/* CLEAR FILTERS */}
+          {/* CLEAR ALL FILTERS */}
           <button
             type="button"
             className="outline-button full-width"
@@ -454,11 +494,12 @@ export default function Shop() {
           </button>
         </aside>
 
-        {/* PRODUCTS */}
+        {/* PRODUCT RESULTS */}
         <section className="shop-results">
           {loading ? (
             <div className="empty-state">
               <h2>Loading products...</h2>
+
               <p>
                 Please wait while we load
                 the collection.
@@ -477,14 +518,12 @@ export default function Shop() {
               layout
               className="product-grid"
             >
-              {filteredProducts.map(
-                (product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                  />
-                )
-              )}
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                />
+              ))}
             </motion.div>
           ) : (
             <div className="empty-state">

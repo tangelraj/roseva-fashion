@@ -5,7 +5,7 @@ import { Heart, ShoppingBag } from "lucide-react";
 import { motion } from "motion/react";
 
 import { useShop } from "../context/ShopContext";
-import { getImageUrl } from "../utils/imageUrl";
+import { getProductImage } from "../utils/imageUrl";
 
 export default function ProductCard({ product }) {
   const {
@@ -14,6 +14,7 @@ export default function ProductCard({ product }) {
     isWishlisted,
   } = useShop();
 
+  // Product sizes
   const sizes = Array.isArray(product.sizes)
     ? product.sizes
     : [];
@@ -27,14 +28,18 @@ export default function ProductCard({ product }) {
 
   const timeoutRef = useRef(null);
 
+  // Resolve the correct product image
+  const imageUrl = getProductImage(product);
+
   useEffect(() => {
     setSelectedSize(sizes[0] || "");
   }, [product.id, product.sizes]);
 
   useEffect(() => {
     setImageError(false);
-  }, [product.id, product.image]);
+  }, [product.id, imageUrl]);
 
+  // Clear pending timeout when component unmounts
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -43,25 +48,7 @@ export default function ProductCard({ product }) {
     };
   }, []);
 
-  // Get image from Django product data
-  const rawImage =
-    product.image ||
-    product.image_url ||
-    product.primary_image ||
-    product.images?.[0]?.image ||
-    product.images?.[0]?.url ||
-    "";
-
-  const imageUrl = getImageUrl(rawImage);
-
-  // Local fallback image
-  const fallbackImage = "/images/products/product-1.webp";
-
-  const displayImage =
-    !imageError && imageUrl
-      ? imageUrl
-      : fallbackImage;
-
+  // Prices
   const price = Number(product.price ?? 0);
 
   const originalPrice = Number(
@@ -80,11 +67,12 @@ export default function ProductCard({ product }) {
 
   const wishlisted = isWishlisted(product.id);
 
+  // Add product to cart
   const handleAdd = () => {
     addToCart(
       {
         ...product,
-        image: displayImage,
+        image: imageUrl,
         price,
         originalPrice: hasDiscount
           ? originalPrice
@@ -109,10 +97,7 @@ export default function ProductCard({ product }) {
       className="product-card"
       initial={{ opacity: 0, y: 35 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{
-        once: true,
-        amount: 0.1,
-      }}
+      viewport={{ once: true, amount: 0.1 }}
       transition={{ duration: 0.5 }}
       whileHover={{ y: -5 }}
     >
@@ -123,16 +108,36 @@ export default function ProductCard({ product }) {
             product.name || ""
           )}`}
         >
-          <img
-            src={displayImage}
-            alt={product.name || "Fashion product"}
-            loading="lazy"
-            onError={() => {
-              if (!imageError) {
-                setImageError(true);
+          {imageUrl && !imageError ? (
+            <img
+              src={imageUrl}
+              alt={product.name || "Fashion product"}
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div
+              className="product-image-placeholder"
+              role="img"
+              aria-label={
+                product.name || "Product image unavailable"
               }
-            }}
-          />
+              style={{
+                width: "100%",
+                height: "100%",
+                minHeight: "280px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#f7f1f0",
+                color: "#8b6b72",
+                textAlign: "center",
+                padding: "20px",
+              }}
+            >
+              Image unavailable
+            </div>
+          )}
         </Link>
 
         {/* DISCOUNT BADGE */}
@@ -158,28 +163,23 @@ export default function ProductCard({ product }) {
           <Heart
             size={20}
             fill={
-              wishlisted
-                ? "currentColor"
-                : "none"
+              wishlisted ? "currentColor" : "none"
             }
           />
         </button>
       </div>
 
-      {/* PRODUCT DETAILS */}
+      {/* PRODUCT INFORMATION */}
       <div className="product-info">
         <span className="product-category">
-          {[
-            product.fabric,
-            product.occasion,
-          ]
+          {[product.fabric, product.occasion]
             .filter(Boolean)
             .join(" · ")}
         </span>
 
         <h3>{product.name}</h3>
 
-        {/* PRICE */}
+        {/* PRODUCT PRICE */}
         <div className="product-price">
           <strong>
             ₹{price.toLocaleString("en-IN")}
@@ -187,30 +187,23 @@ export default function ProductCard({ product }) {
 
           {hasDiscount && (
             <del>
-              ₹{originalPrice.toLocaleString(
-                "en-IN"
-              )}
+              ₹{originalPrice.toLocaleString("en-IN")}
             </del>
           )}
         </div>
 
-        {/* CART ACTIONS */}
+        {/* SIZE AND ADD TO CART */}
         <div className="product-actions">
           {sizes.length > 0 && (
             <select
               value={selectedSize}
               onChange={(event) =>
-                setSelectedSize(
-                  event.target.value
-                )
+                setSelectedSize(event.target.value)
               }
               aria-label={`Select size for ${product.name}`}
             >
               {sizes.map((size) => (
-                <option
-                  key={size}
-                  value={size}
-                >
+                <option key={size} value={size}>
                   {size}
                 </option>
               ))}
@@ -223,10 +216,7 @@ export default function ProductCard({ product }) {
             onClick={handleAdd}
           >
             <ShoppingBag size={16} />
-
-            {added
-              ? "Added!"
-              : "Add to Cart"}
+            {added ? "Added!" : "Add to Cart"}
           </button>
         </div>
       </div>
