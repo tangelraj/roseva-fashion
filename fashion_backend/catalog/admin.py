@@ -7,7 +7,7 @@ from .models import (
     ProductImage,
     ProductVariant,
 )
-
+from .models import ProductReview
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -90,3 +90,39 @@ class ProductVariantAdmin(admin.ModelAdmin):
 
     list_editable = ("stock", "is_active")
     list_filter = ("is_active", "size")
+
+
+@admin.register(ProductReview)
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = (
+        "product",
+        "customer",
+        "rating",
+        "is_verified_purchase",
+        "is_approved",
+        "created_at",
+    )
+
+    list_filter = (
+        "rating",
+        "is_approved",
+        "created_at",
+    )
+
+    search_fields = (
+        "product__name",
+        "customer__username",
+        "title",
+        "comment",
+    )
+
+    readonly_fields = (
+        "product",
+        "customer",
+        "rating",
+        "title",
+        "comment",
+        "is_verified_purchase",
+        "created_at",
+        "updated_at",
+    )

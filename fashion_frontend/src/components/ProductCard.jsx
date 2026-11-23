@@ -7,6 +7,9 @@ import { motion } from "motion/react";
 import { useShop } from "../context/ShopContext";
 import { getProductImage } from "../utils/imageUrl";
 
+import StarRating from "./StarRating";
+import { getProductReviews } from "../services/reviewApi";
+
 export default function ProductCard({ product }) {
   const {
     addToCart,
@@ -14,7 +17,10 @@ export default function ProductCard({ product }) {
     isWishlisted,
   } = useShop();
 
-  // Product sizes
+  // =====================================
+  // PRODUCT SIZES
+  // =====================================
+
   const sizes = Array.isArray(product.sizes)
     ? product.sizes
     : [];
@@ -23,12 +29,25 @@ export default function ProductCard({ product }) {
     sizes[0] || ""
   );
 
+  // =====================================
+  // COMPONENT STATES
+  // =====================================
+
   const [added, setAdded] = useState(false);
+
   const [imageError, setImageError] = useState(false);
+
+  const [reviewStats, setReviewStats] = useState({
+    average_rating: 0,
+    total_reviews: 0,
+  });
 
   const timeoutRef = useRef(null);
 
-  // Resolve the correct product image
+  // =====================================
+  // PRODUCT IMAGE
+  // =====================================
+
   const imageUrl = getProductImage(product);
 
   useEffect(() => {
@@ -39,7 +58,66 @@ export default function ProductCard({ product }) {
     setImageError(false);
   }, [product.id, imageUrl]);
 
-  // Clear pending timeout when component unmounts
+  // =====================================
+  // LOAD PRODUCT REVIEWS
+  // =====================================
+
+  useEffect(() => {
+    if (!product.id) {
+      setReviewStats({
+        average_rating: 0,
+        total_reviews: 0,
+      });
+      return;
+    }
+
+    let cancelled = false;
+
+    setReviewStats({
+      average_rating: 0,
+      total_reviews: 0,
+    });
+
+    async function loadReviews() {
+      try {
+        const data = await getProductReviews(product.id);
+
+        if (!cancelled) {
+          setReviewStats({
+            average_rating: Number(
+              data.average_rating || 0
+            ),
+            total_reviews: Number(
+              data.total_reviews || 0
+            ),
+          });
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error(
+            "Unable to load product reviews:",
+            error
+          );
+
+          setReviewStats({
+            average_rating: 0,
+            total_reviews: 0,
+          });
+        }
+      }
+    }
+
+    loadReviews();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [product.id]);
+
+  // =====================================
+  // CLEAR TIMEOUT ON UNMOUNT
+  // =====================================
+
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -48,11 +126,16 @@ export default function ProductCard({ product }) {
     };
   }, []);
 
-  // Prices
+  // =====================================
+  // PRODUCT PRICE
+  // =====================================
+
   const price = Number(product.price ?? 0);
 
   const originalPrice = Number(
-    product.originalPrice ?? 0
+    product.originalPrice ??
+    product.original_price ??
+    0
   );
 
   const hasDiscount =
@@ -65,9 +148,16 @@ export default function ProductCard({ product }) {
       )
     : 0;
 
+  // =====================================
+  // WISHLIST
+  // =====================================
+
   const wishlisted = isWishlisted(product.id);
 
-  // Add product to cart
+  // =====================================
+  // ADD TO CART
+  // =====================================
+
   const handleAdd = () => {
     addToCart(
       {
@@ -92,6 +182,10 @@ export default function ProductCard({ product }) {
     }, 1200);
   };
 
+  // =====================================
+  // PRODUCT CARD UI
+  // =====================================
+
   return (
     <motion.article
       className="product-card"
@@ -102,6 +196,7 @@ export default function ProductCard({ product }) {
       whileHover={{ y: -5 }}
     >
       {/* PRODUCT IMAGE */}
+
       <div className="product-image">
         <Link
           to={`/shop?search=${encodeURIComponent(
@@ -120,7 +215,8 @@ export default function ProductCard({ product }) {
               className="product-image-placeholder"
               role="img"
               aria-label={
-                product.name || "Product image unavailable"
+                product.name ||
+                "Product image unavailable"
               }
               style={{
                 width: "100%",
@@ -141,6 +237,7 @@ export default function ProductCard({ product }) {
         </Link>
 
         {/* DISCOUNT BADGE */}
+
         {hasDiscount && (
           <span className="discount-badge">
             {discount}% OFF
@@ -148,6 +245,7 @@ export default function ProductCard({ product }) {
         )}
 
         {/* WISHLIST BUTTON */}
+
         <button
           type="button"
           className={`wishlist-button ${
@@ -163,13 +261,16 @@ export default function ProductCard({ product }) {
           <Heart
             size={20}
             fill={
-              wishlisted ? "currentColor" : "none"
+              wishlisted
+                ? "currentColor"
+                : "none"
             }
           />
         </button>
       </div>
 
       {/* PRODUCT INFORMATION */}
+
       <div className="product-info">
         <span className="product-category">
           {[product.fabric, product.occasion]
@@ -177,9 +278,40 @@ export default function ProductCard({ product }) {
             .join(" · ")}
         </span>
 
+        {/* PRODUCT NAME */}
+
         <h3>{product.name}</h3>
 
+        {/* PRODUCT STAR RATING */}
+
+        <div className="product-review-rating">
+          {reviewStats.total_reviews > 0 ? (
+            <>
+              <StarRating
+                rating={reviewStats.average_rating}
+                size={16}
+              />
+
+              <span className="rating-number">
+                {reviewStats.average_rating.toFixed(1)}
+              </span>
+
+              <span className="rating-count">
+                ({reviewStats.total_reviews}{" "}
+                {reviewStats.total_reviews === 1
+                  ? "review"
+                  : "reviews"})
+              </span>
+            </>
+          ) : (
+            <span className="no-product-reviews">
+              No reviews yet
+            </span>
+          )}
+        </div>
+
         {/* PRODUCT PRICE */}
+
         <div className="product-price">
           <strong>
             ₹{price.toLocaleString("en-IN")}
@@ -193,6 +325,7 @@ export default function ProductCard({ product }) {
         </div>
 
         {/* SIZE AND ADD TO CART */}
+
         <div className="product-actions">
           {sizes.length > 0 && (
             <select
@@ -203,7 +336,10 @@ export default function ProductCard({ product }) {
               aria-label={`Select size for ${product.name}`}
             >
               {sizes.map((size) => (
-                <option key={size} value={size}>
+                <option
+                  key={size}
+                  value={size}
+                >
                   {size}
                 </option>
               ))}
@@ -216,6 +352,7 @@ export default function ProductCard({ product }) {
             onClick={handleAdd}
           >
             <ShoppingBag size={16} />
+
             {added ? "Added!" : "Add to Cart"}
           </button>
         </div>

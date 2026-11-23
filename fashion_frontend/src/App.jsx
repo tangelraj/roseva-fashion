@@ -20,6 +20,12 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import MyAccount from "./pages/MyAccount";
 import MyOrders from "./pages/MyOrders";
+import About from "./pages/About";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
+import WhyChooseUs from "./pages/WhyChooseUs";
+import "./pages/InfoPages.css";
+import VerifyOTP from "./pages/VerifyOTP";
 
 export default function App() {
   return (
@@ -84,9 +90,13 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route path="/verify-otp" element={<VerifyOTP />} />
         {/* Fallback */}
         <Route path="*" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/why-choose-us" element={<WhyChooseUs />} />
       </Routes>
 
       {/* Existing Django CMS-connected footer */}

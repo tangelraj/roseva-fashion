@@ -18,6 +18,8 @@ urlpatterns = [
 
     # Customer login and registration
     path("api/customers/", include("customers.urls")),
+
+    
 ]
 
 if settings.DEBUG:

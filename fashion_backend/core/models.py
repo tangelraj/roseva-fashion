@@ -384,3 +384,92 @@ class PageContent(models.Model):
     def __str__(self):
         return f"{self.get_page_display()} - {self.section_key}"
 
+
+from django.db import models
+
+
+class AboutPage(models.Model):
+    title = models.CharField(
+        max_length=200,
+        default="About Roséva Fashion"
+    )
+    subtitle = models.CharField(
+        max_length=250,
+        blank=True
+    )
+    description = models.TextField()
+    mission = models.TextField(blank=True)
+    vision = models.TextField(blank=True)
+    image = models.ImageField(
+        upload_to="about/",
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        return self.title
+
+
+class FAQ(models.Model):
+    question = models.CharField(max_length=300)
+    answer = models.TextField()
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.question
+
+
+class ContactSettings(models.Model):
+    title = models.CharField(
+        max_length=200,
+        default="Contact Us"
+    )
+    description = models.TextField(blank=True)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(
+        max_length=30,
+        blank=True
+    )
+    address = models.TextField(blank=True)
+    instagram_url = models.URLField(blank=True)
+    facebook_url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.title
+
+
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
+    subject = models.CharField(
+        max_length=200,
+        blank=True
+    )
+    message = models.TextField()
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.name} - {self.email}"
+
+
+class WhyChooseUsItem(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    icon = models.CharField(
+        max_length=50,
+        default="heart"
+    )
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.title

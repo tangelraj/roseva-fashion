@@ -384,3 +384,69 @@ class FooterLinkAdmin(admin.ModelAdmin):
         "title",
         "url",
     )
+
+
+from django.contrib import admin
+
+from .models import (
+    AboutPage,
+    FAQ,
+    ContactSettings,
+    ContactMessage,
+    WhyChooseUsItem,
+)
+
+
+@admin.register(AboutPage)
+class AboutPageAdmin(admin.ModelAdmin):
+    list_display = ("title",)
+
+
+@admin.register(FAQ)
+class FAQAdmin(admin.ModelAdmin):
+    list_display = (
+        "question",
+        "order",
+        "is_active",
+    )
+    list_editable = (
+        "order",
+        "is_active",
+    )
+    search_fields = ("question", "answer")
+
+
+@admin.register(ContactSettings)
+class ContactSettingsAdmin(admin.ModelAdmin):
+    list_display = ("title", "email", "phone")
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "email",
+        "subject",
+        "created_at",
+    )
+    readonly_fields = (
+        "name",
+        "email",
+        "subject",
+        "message",
+        "created_at",
+    )
+
+
+@admin.register(WhyChooseUsItem)
+class WhyChooseUsItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "icon",
+        "order",
+        "is_active",
+    )
+    list_editable = (
+        "order",
+        "is_active",
+    )

@@ -159,6 +159,11 @@ export default function Navbar() {
             Home
           </Link>
 
+          <Link to="/about">About Us</Link>
+          <Link to="/faq">FAQ</Link>
+          <Link to="/contact">Contact Us</Link>
+          <Link to="/why-choose-us">Why Choose Us</Link>
+
           <Link to="/shop" onClick={closeMenu}>
             Shop
           </Link>

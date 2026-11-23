@@ -14,14 +14,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ==========================================
-# HELPER FUNCTIONS
+# ENVIRONMENT HELPERS
 # ==========================================
 
 def get_env_bool(name, default=False):
-    value = os.environ.get(
-        name,
-        str(default)
-    )
+    value = os.environ.get(name, str(default))
 
     return value.strip().lower() in (
         "true",
@@ -42,14 +39,13 @@ def get_env_list(name, default=""):
 
 
 # ==========================================
-# SECURITY SETTINGS
+# SECURITY
 # ==========================================
 
 DEBUG = get_env_bool("DEBUG", True)
 
 SECRET_KEY = os.environ.get(
-    "SECRET_KEY",
-    ""
+    "SECRET_KEY", ""
 ).strip()
 
 if not SECRET_KEY:
@@ -78,18 +74,18 @@ if not DEBUG and SECRET_KEY.startswith(
 
 ALLOWED_HOSTS = get_env_list(
     "ALLOWED_HOSTS",
-    "127.0.0.1,localhost"
+    "127.0.0.1,localhost",
 )
 
-# Render provides the service hostname.
 render_hostname = os.environ.get(
-    "RENDER_EXTERNAL_HOSTNAME",
-    ""
+    "RENDER_EXTERNAL_HOSTNAME", ""
 ).strip()
 
-if render_hostname:
-    if render_hostname not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append(render_hostname)
+if (
+    render_hostname
+    and render_hostname not in ALLOWED_HOSTS
+):
+    ALLOWED_HOSTS.append(render_hostname)
 
 
 # ==========================================
@@ -97,7 +93,7 @@ if render_hostname:
 # ==========================================
 
 INSTALLED_APPS = [
-    # Django applications
+    # Django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -105,11 +101,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Third-party applications
+    # Third-party
     "rest_framework",
+    "rest_framework_simplejwt",
     "corsheaders",
 
-    # Roséva Fashion applications
+    # Project apps
     "core",
     "catalog",
     "customers",
@@ -117,6 +114,10 @@ INSTALLED_APPS = [
     "payments",
     "promotions",
     "shipping",
+
+    # Cloudinary
+    "cloudinary_storage",
+    "cloudinary",
 ]
 
 
@@ -162,11 +163,8 @@ TEMPLATES = [
             "django.template.backends."
             "django.DjangoTemplates"
         ),
-
         "DIRS": [],
-
         "APP_DIRS": True,
-
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -190,12 +188,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 # DATABASE
 # ==========================================
 
-# Local development: SQLite
-# Render production: PostgreSQL
-
 DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    ""
+    "DATABASE_URL", ""
 ).strip()
 
 if not DEBUG and not DATABASE_URL:
@@ -206,16 +200,14 @@ if not DEBUG and not DATABASE_URL:
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=(
-            f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
-        ),
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600,
         conn_health_checks=True,
         ssl_require=(
             bool(DATABASE_URL)
             and get_env_bool(
                 "DATABASE_SSL_REQUIRE",
-                False
+                False,
             )
         ),
     )
@@ -263,7 +255,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -272,7 +263,6 @@ USE_TZ = True
 # ==========================================
 
 STATIC_URL = "/static/"
-
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
@@ -281,25 +271,39 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # ==========================================
 
 MEDIA_URL = "/media/"
-
 MEDIA_ROOT = BASE_DIR / "media"
 
 
 # ==========================================
-# FILE STORAGE
+# CLOUDINARY / FILE STORAGE
 # ==========================================
 
+CLOUDINARY_CLOUD_NAME = os.environ.get(
+    "CLOUDINARY_CLOUD_NAME", ""
+)
+
+CLOUDINARY_API_KEY = os.environ.get(
+    "CLOUDINARY_API_KEY", ""
+)
+
+CLOUDINARY_API_SECRET = os.environ.get(
+    "CLOUDINARY_API_SECRET", ""
+)
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": CLOUDINARY_CLOUD_NAME,
+    "API_KEY": CLOUDINARY_API_KEY,
+    "API_SECRET": CLOUDINARY_API_SECRET,
+}
+
 STORAGES = {
-    # Product images, category images,
-    # and other uploaded files
     "default": {
         "BACKEND": (
-            "django.core.files.storage."
-            "FileSystemStorage"
+            "cloudinary_storage.storage.MediaCloudinaryStorage"
+            if CLOUDINARY_CLOUD_NAME
+            else "django.core.files.storage.FileSystemStorage"
         ),
     },
-
-    # Django admin static files
     "staticfiles": {
         "BACKEND": (
             "whitenoise.storage."
@@ -310,22 +314,27 @@ STORAGES = {
 
 
 # ==========================================
-# CORS SETTINGS
+# CORS
 # ==========================================
 
+CORS_ALLOWED_ORIGINS = get_env_list(
+    "CORS_ALLOWED_ORIGINS",
+    (
+        "http://localhost:5173,"
+        "http://127.0.0.1:5173,"
+        "https://roseva-fashion.vercel.app"
+    ),
+)
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://roseva-fashion.vercel.app",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://roseva-fashion.vercel.app",
-    "https://roseva-fashion.onrender.com",
-]
+CSRF_TRUSTED_ORIGINS = get_env_list(
+    "CSRF_TRUSTED_ORIGINS",
+    (
+        "http://localhost:5173,"
+        "http://127.0.0.1:5173,"
+        "https://roseva-fashion.vercel.app,"
+        "https://roseva-fashion.onrender.com"
+    ),
+)
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -375,54 +384,78 @@ SIMPLE_JWT = {
 # EMAIL CONFIGURATION
 # ==========================================
 
-# Local default: print emails in terminal.
-# Render: configure SMTP environment variables.
-
-EMAIL_BACKEND = os.environ.get(
-    "EMAIL_BACKEND",
-    "django.core.mail.backends.console.EmailBackend",
-)
-
 EMAIL_HOST = os.environ.get(
     "EMAIL_HOST",
     "smtp.gmail.com",
 )
 
 EMAIL_PORT = int(
-    os.environ.get(
-        "EMAIL_PORT",
-        "587"
-    )
+    os.environ.get("EMAIL_PORT", "587")
 )
 
 EMAIL_USE_TLS = get_env_bool(
     "EMAIL_USE_TLS",
-    True
+    True,
 )
 
-EMAIL_USE_SSL = False
+EMAIL_USE_SSL = get_env_bool(
+    "EMAIL_USE_SSL",
+    False,
+)
 
 EMAIL_HOST_USER = os.environ.get(
-    "EMAIL_HOST_USER",
-    ""
-)
+    "EMAIL_HOST_USER", ""
+).strip()
 
 EMAIL_HOST_PASSWORD = os.environ.get(
-    "EMAIL_HOST_PASSWORD",
-    ""
+    "EMAIL_HOST_PASSWORD", ""
+).strip()
+
+EMAIL_TIMEOUT = 20
+
+# Local development defaults to printing OTP emails
+# in the Django terminal.
+#
+# To send real emails locally, set:
+# EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+#
+# Production defaults to SMTP.
+
+DEFAULT_EMAIL_BACKEND = (
+    "django.core.mail.backends.console.EmailBackend"
+    if DEBUG
+    else "django.core.mail.backends.smtp.EmailBackend"
+)
+
+EMAIL_BACKEND = os.environ.get(
+    "EMAIL_BACKEND",
+    DEFAULT_EMAIL_BACKEND,
 )
 
 DEFAULT_FROM_EMAIL = os.environ.get(
     "DEFAULT_FROM_EMAIL",
-    EMAIL_HOST_USER or "noreply@roseva.example",
+    EMAIL_HOST_USER or "no-reply@localhost",
 )
 
-ORDER_ADMIN_EMAIL = os.environ.get(
-    "ORDER_ADMIN_EMAIL",
-    EMAIL_HOST_USER,
+CONTACT_RECEIVER_EMAIL = os.environ.get(
+    "CONTACT_RECEIVER_EMAIL",
+    "tangelraj@gmail.com",
 )
 
-EMAIL_TIMEOUT = 15
+# Require credentials when production SMTP is used.
+if (
+    not DEBUG
+    and EMAIL_BACKEND
+    == "django.core.mail.backends.smtp.EmailBackend"
+    and (
+        not EMAIL_HOST_USER
+        or not EMAIL_HOST_PASSWORD
+    )
+):
+    raise RuntimeError(
+        "EMAIL_HOST_USER and EMAIL_HOST_PASSWORD "
+        "are required for production SMTP email."
+    )
 
 
 # ==========================================
@@ -435,14 +468,13 @@ SECURE_PROXY_SSL_HEADER = (
 )
 
 SESSION_COOKIE_SECURE = not DEBUG
-
 CSRF_COOKIE_SECURE = not DEBUG
 
 SECURE_SSL_REDIRECT = (
     not DEBUG
     and get_env_bool(
         "SECURE_SSL_REDIRECT",
-        True
+        True,
     )
 )
 

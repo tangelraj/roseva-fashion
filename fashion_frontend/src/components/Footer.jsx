@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import {
   Instagram,
   Facebook,
@@ -9,8 +10,11 @@ import {
   Phone,
   Heart,
 } from "lucide-react";
-import { getHomepage } from "../services/api";
 
+import { getHomepage } from "../services/api";
+import { getImageUrl } from "../utils/imageUrl";
+
+// Default website information
 const defaultWebsite = {
   site_name: "ROSÉVA",
   brand_tagline: "FASHION",
@@ -26,70 +30,207 @@ const defaultWebsite = {
     "Made with love for beautiful fashion.",
 };
 
+// Default footer groups
 const fallbackGroups = [
   {
     id: 1,
     title: "Quick Links",
     links: [
-      { id: 1, title: "Home", url: "/" },
-      { id: 2, title: "Shop All", url: "/shop" },
-      { id: 3, title: "Wishlist", url: "/wishlist" },
-      { id: 4, title: "Shopping Cart", url: "/cart" },
+      {
+        id: 1,
+        title: "Home",
+        url: "/",
+      },
+      {
+        id: 2,
+        title: "Shop All",
+        url: "/shop",
+      },
+      {
+        id: 3,
+        title: "Wishlist",
+        url: "/wishlist",
+      },
+      {
+        id: 4,
+        title: "Shopping Cart",
+        url: "/cart",
+      },
     ],
   },
   {
     id: 2,
     title: "Collections",
     links: [
-      { id: 5, title: "Sarees", url: "/shop?category=sarees" },
-      { id: 6, title: "Salwar Suits", url: "/shop?category=salwar" },
-      { id: 7, title: "Frocks", url: "/shop?category=frocks" },
-      { id: 8, title: "Kurtis", url: "/shop?category=kurtis" },
-      { id: 9, title: "Lehengas", url: "/shop?category=lehengas" },
+      {
+        id: 5,
+        title: "Sarees",
+        url: "/shop?category=sarees",
+      },
+      {
+        id: 6,
+        title: "Salwar Suits",
+        url: "/shop?category=salwar",
+      },
+      {
+        id: 7,
+        title: "Frocks",
+        url: "/shop?category=frocks",
+      },
+      {
+        id: 8,
+        title: "Kurtis",
+        url: "/shop?category=kurtis",
+      },
+      {
+        id: 9,
+        title: "Lehengas",
+        url: "/shop?category=lehengas",
+      },
     ],
   },
   {
     id: 3,
     title: "Customer Care",
     links: [
-      { id: 10, title: "Track Order", url: "/track-order" },
+      {
+        id: 10,
+        title: "Track Order",
+        url: "/track-order",
+      },
       {
         id: 11,
-        title: "Contact Support",
-        url: "mailto:support@example.com",
+        title: "About Us",
+        url: "/about",
+      },
+      {
+        id: 12,
+        title: "FAQ",
+        url: "/faq",
+      },
+      {
+        id: 13,
+        title: "Contact Us",
+        url: "/contact",
+      },
+      {
+        id: 14,
+        title: "Why Choose Us",
+        url: "/why-choose-us",
       },
     ],
   },
 ];
 
+// Links that should appear in Customer Care
+const customerCareLinks = [
+  {
+    id: "about",
+    title: "About Us",
+    url: "/about",
+  },
+  {
+    id: "faq",
+    title: "FAQ",
+    url: "/faq",
+  },
+  {
+    id: "contact",
+    title: "Contact Us",
+    url: "/contact",
+  },
+  {
+    id: "why",
+    title: "Why Choose Us",
+    url: "/why-choose-us",
+  },
+];
+
+// Sort footer groups and links
+function sortByOrder(items) {
+  return [...items].sort(
+    (a, b) =>
+      Number(a.display_order ?? 0) -
+      Number(b.display_order ?? 0)
+  );
+}
+
+// Add missing Customer Care links without duplicates
+function getCustomerCareLinks(links = []) {
+  const existingLinks = Array.isArray(links)
+    ? links.filter(
+        (item) => item.is_active !== false
+      )
+    : [];
+
+  const existingUrls = new Set(
+    existingLinks.map((item) => {
+      const url = String(item.url || "/");
+      return url.replace(/\/+$/, "") || "/";
+    })
+  );
+
+  const missingLinks = customerCareLinks.filter(
+    (item) => !existingUrls.has(item.url)
+  );
+
+  return [
+    ...sortByOrder(existingLinks),
+    ...missingLinks,
+  ];
+}
+
+// Render internal and external links
 function FooterLink({ item }) {
   const url = item.url || "/";
 
-  if (
+  const isExternal =
     url.startsWith("http://") ||
     url.startsWith("https://") ||
     url.startsWith("mailto:") ||
-    url.startsWith("tel:")
-  ) {
+    url.startsWith("tel:");
+
+  if (isExternal) {
+    const opensNewTab =
+      url.startsWith("http://") ||
+      url.startsWith("https://");
+
     return (
       <a
         href={url}
-        target={url.startsWith("http") ? "_blank" : undefined}
-        rel={url.startsWith("http") ? "noopener noreferrer" : undefined}
+        target={opensNewTab ? "_blank" : undefined}
+        rel={
+          opensNewTab
+            ? "noopener noreferrer"
+            : undefined
+        }
       >
-        {url.startsWith("mailto:") && <Mail size={16} />}
+        {url.startsWith("mailto:") && (
+          <Mail size={16} />
+        )}
+
         {item.title}
       </a>
     );
   }
 
-  return <Link to={url}>{item.title}</Link>;
+  return (
+    <Link to={url}>
+      {item.title}
+    </Link>
+  );
 }
 
 export default function Footer() {
-  const [website, setWebsite] = useState(defaultWebsite);
-  const [groups, setGroups] = useState(fallbackGroups);
+  const [website, setWebsite] = useState(
+    defaultWebsite
+  );
 
+  const [groups, setGroups] = useState(
+    fallbackGroups
+  );
+
+  // Load footer content from Django Admin
   useEffect(() => {
     let cancelled = false;
 
@@ -99,26 +240,35 @@ export default function Footer() {
 
         if (cancelled) return;
 
-        if (data.website) {
+        // Website settings
+        if (data?.website) {
           setWebsite({
             ...defaultWebsite,
             ...data.website,
           });
         }
 
-        if (Array.isArray(data.footer_groups)) {
-          setGroups(
-            data.footer_groups
-              .filter((group) => group.is_active !== false)
-              .sort(
-                (a, b) =>
-                  (a.display_order ?? 0) -
-                  (b.display_order ?? 0)
-              )
+        // Footer groups from Django
+        if (
+          Array.isArray(data?.footer_groups) &&
+          data.footer_groups.length > 0
+        ) {
+          const activeGroups = sortByOrder(
+            data.footer_groups.filter(
+              (group) =>
+                group.is_active !== false
+            )
           );
+
+          setGroups(activeGroups);
         }
       } catch (error) {
-        console.error("Footer API error:", error);
+        if (!cancelled) {
+          console.error(
+            "Footer API error:",
+            error
+          );
+        }
       }
     }
 
@@ -129,15 +279,42 @@ export default function Footer() {
     };
   }, []);
 
+  // Identify Customer Care group
+  const hasCustomerCareGroup = groups.some(
+    (group) =>
+      String(group.title || "")
+        .toLowerCase()
+        .includes("customer")
+  );
+
+  // Add Customer Care group if Django doesn't provide one
+  const displayGroups = hasCustomerCareGroup
+    ? groups
+    : [
+        ...groups,
+        {
+          id: "customer-care",
+          title: "Customer Care",
+          links: customerCareLinks,
+        },
+      ];
+
   return (
     <footer className="footer">
       <div className="footer-container">
+        {/* BRAND INFORMATION */}
         <div className="footer-brand">
-          <Link to="/" className="brand-logo">
+          <Link
+            to="/"
+            className="brand-logo"
+          >
             {website.logo ? (
               <img
-                src={website.logo}
-                alt={website.site_name || "Roséva Fashion"}
+                src={getImageUrl(website.logo)}
+                alt={
+                  website.site_name ||
+                  "Roséva Fashion"
+                }
                 style={{
                   maxWidth: 170,
                   maxHeight: 48,
@@ -147,13 +324,20 @@ export default function Footer() {
             ) : (
               <>
                 {website.site_name || "ROSÉVA"}
-                <small>{website.brand_tagline || "FASHION"}</small>
+
+                <small>
+                  {website.brand_tagline ||
+                    "FASHION"}
+                </small>
               </>
             )}
           </Link>
 
-          <p>{website.footer_description}</p>
+          <p>
+            {website.footer_description}
+          </p>
 
+          {/* SOCIAL MEDIA */}
           <div className="footer-socials">
             {website.instagram_url && (
               <a
@@ -179,44 +363,87 @@ export default function Footer() {
           </div>
         </div>
 
-        {groups.map((group) => (
-          <div className="footer-column" key={group.id}>
-            <h3>{group.title}</h3>
+        {/* FOOTER LINK GROUPS */}
+        {displayGroups.map((group) => {
+          const isCustomerCare = String(
+            group.title || ""
+          )
+            .toLowerCase()
+            .includes("customer");
 
-            {(group.links || [])
-              .filter((item) => item.is_active !== false)
-              .sort(
-                (a, b) =>
-                  (a.display_order ?? 0) -
-                  (b.display_order ?? 0)
+          const links = isCustomerCare
+            ? getCustomerCareLinks(
+                group.links || []
               )
-              .map((item) => (
-                <FooterLink key={item.id} item={item} />
+            : sortByOrder(
+                (group.links || []).filter(
+                  (item) =>
+                    item.is_active !== false
+                )
+              );
+
+          return (
+            <div
+              className="footer-column"
+              key={group.id}
+            >
+              <h3>{group.title}</h3>
+
+              {/* FOOTER LINKS */}
+              {links.map((item) => (
+                <FooterLink
+                  key={item.id ?? item.url}
+                  item={item}
+                />
               ))}
 
-            {group.title.toLowerCase().includes("customer") && (
-              <>
-                {website.phone && (
-                  <p>
-                    <Phone size={16} /> {website.phone}
-                  </p>
-                )}
+              {/* CONTACT INFORMATION */}
+              {isCustomerCare && (
+                <>
+                  {website.email && (
+                    <p>
+                      <Mail size={16} />
 
-                {website.address && (
-                  <p>
-                    <MapPin size={16} /> {website.address}
-                  </p>
-                )}
-              </>
-            )}
-          </div>
-        ))}
+                      <a
+                        href={`mailto:${website.email}`}
+                      >
+                        {website.email}
+                      </a>
+                    </p>
+                  )}
+
+                  {website.phone && (
+                    <p>
+                      <Phone size={16} />
+
+                      <a
+                        href={`tel:${website.phone}`}
+                      >
+                        {website.phone}
+                      </a>
+                    </p>
+                  )}
+
+                  {website.address && (
+                    <p>
+                      <MapPin size={16} />
+                      {website.address}
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          );
+        })}
       </div>
 
+      {/* FOOTER BOTTOM */}
       <div className="footer-bottom">
         <p>
           © {new Date().getFullYear()}{" "}
-          {website.site_name || "Roséva Fashion"}. All rights reserved.
+          {website.site_name ||
+            "Roséva Fashion"}
+          . All rights reserved.
         </p>
 
         <p>

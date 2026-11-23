@@ -128,3 +128,71 @@ class ProductVariant(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.size} - {self.color}"
+
+
+from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+
+class ProductReview(models.Model):
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+
+    customer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="product_reviews",
+    )
+
+    rating = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ]
+    )
+
+    title = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    comment = models.TextField(
+        max_length=2000,
+    )
+
+    is_verified_purchase = models.BooleanField(
+        default=True,
+        editable=False,
+    )
+
+    is_approved = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=["product", "customer"],
+                name="unique_customer_product_review",
+            )
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.product.name} - "
+            f"{self.rating} Stars"
+        )
