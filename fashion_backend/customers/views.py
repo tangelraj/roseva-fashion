@@ -2,11 +2,12 @@
 from datetime import timedelta
 import logging
 
+import resend
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
 from django.db import transaction
 from django.utils import timezone
 
@@ -33,6 +34,7 @@ from .serializers import (
     LoginSerializer,
     CustomerSerializer,
 )
+
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -76,13 +78,39 @@ def generate_tokens(user):
 
 
 # ==========================================
-# SEND OTP EMAIL
+# SEND OTP EMAIL USING RESEND API
 # ==========================================
 
 def send_verification_email(user, otp):
-    return send_mail(
-        subject="Roséva Fashion - Verify Your Email",
-        message=(
+    api_key = getattr(
+        settings,
+        "RESEND_API_KEY",
+        "",
+    )
+
+    from_email = getattr(
+        settings,
+        "RESEND_FROM_EMAIL",
+        "",
+    )
+
+    if not api_key:
+        raise RuntimeError(
+            "RESEND_API_KEY is not configured."
+        )
+
+    if not from_email:
+        raise RuntimeError(
+            "RESEND_FROM_EMAIL is not configured."
+        )
+
+    resend.api_key = api_key
+
+    email_params = {
+        "from": from_email,
+        "to": [user.email],
+        "subject": "Roséva Fashion - Verify Your Email",
+        "text": (
             "Welcome to Roséva Fashion!\n\n"
             f"Your email verification OTP is: {otp}\n\n"
             "This OTP is valid for 5 minutes.\n"
@@ -91,10 +119,29 @@ def send_verification_email(user, otp):
             "please ignore this email.\n\n"
             "Roséva Fashion Team"
         ),
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[user.email],
-        fail_silently=False,
+    }
+
+    result = resend.Emails.send(email_params)
+
+    # Resend normally returns a dictionary
+    # containing the accepted email ID.
+    email_id = (
+        result.get("id")
+        if isinstance(result, dict)
+        else getattr(result, "id", None)
     )
+
+    if not email_id:
+        raise RuntimeError(
+            "Resend did not confirm email acceptance."
+        )
+
+    logger.info(
+        "OTP email accepted by provider for user ID %s",
+        user.pk,
+    )
+
+    return result
 
 
 # ==========================================
@@ -105,13 +152,19 @@ def send_verification_email(user, otp):
 @permission_classes([AllowAny])
 @throttle_classes([RegisterThrottle])
 def register_customer(request):
-    serializer = RegisterSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
+    serializer = RegisterSerializer(
+        data=request.data
+    )
+
+    serializer.is_valid(
+        raise_exception=True
+    )
 
     password = serializer.validated_data["password"]
 
     try:
         validate_password(password)
+
     except ValidationError as exc:
         return Response(
             {"password": exc.messages},
@@ -122,8 +175,12 @@ def register_customer(request):
         with transaction.atomic():
             user = serializer.save()
 
+            # Account remains inactive until
+            # email OTP verification succeeds.
             user.is_active = False
-            user.save(update_fields=["is_active"])
+            user.save(
+                update_fields=["is_active"]
+            )
 
             verification = EmailOTP.objects.create(
                 user=user
@@ -131,8 +188,8 @@ def register_customer(request):
 
             otp = verification.generate_otp()
 
-            # If email delivery fails, the transaction
-            # rolls back account and OTP creation.
+            # If the email API raises an error,
+            # the database transaction rolls back.
             send_verification_email(user, otp)
 
     except Exception:
@@ -143,7 +200,8 @@ def register_customer(request):
         return Response(
             {
                 "error": (
-                    "Unable to complete registration. "
+                    "Unable to complete registration "
+                    "or send verification email. "
                     "Please try again."
                 )
             },
@@ -181,13 +239,21 @@ def verify_email_otp(request):
 
     if not email or not otp:
         return Response(
-            {"error": "Email and OTP are required."},
+            {
+                "error": (
+                    "Email and OTP are required."
+                )
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     if len(otp) != 6 or not otp.isdigit():
         return Response(
-            {"error": "Enter a valid 6-digit OTP."},
+            {
+                "error": (
+                    "Enter a valid 6-digit OTP."
+                )
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -199,7 +265,11 @@ def verify_email_otp(request):
 
         if len(users) != 1:
             return Response(
-                {"error": "Invalid email or OTP."},
+                {
+                    "error": (
+                        "Invalid email or OTP."
+                    )
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -210,9 +280,14 @@ def verify_email_otp(request):
                 EmailOTP.objects.select_for_update()
                 .get(user=user)
             )
+
         except EmailOTP.DoesNotExist:
             return Response(
-                {"error": "Invalid email or OTP."},
+                {
+                    "error": (
+                        "Invalid email or OTP."
+                    )
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -220,7 +295,9 @@ def verify_email_otp(request):
             if user.is_active:
                 return Response(
                     {
-                        "message": "Email already verified.",
+                        "message": (
+                            "Email already verified."
+                        ),
                         "verified": True,
                     }
                 )
@@ -247,7 +324,9 @@ def verify_email_otp(request):
             )
 
         user.is_active = True
-        user.save(update_fields=["is_active"])
+        user.save(
+            update_fields=["is_active"]
+        )
 
     return Response(
         {
@@ -256,7 +335,8 @@ def verify_email_otp(request):
                 "You can now log in."
             ),
             "verified": True,
-        }
+        },
+        status=status.HTTP_200_OK,
     )
 
 
@@ -274,7 +354,9 @@ def resend_email_otp(request):
 
     if not email:
         return Response(
-            {"error": "Email is required."},
+            {
+                "error": "Email is required."
+            },
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -292,14 +374,18 @@ def resend_email_otp(request):
 
             if len(users) != 1:
                 return Response(
-                    {"message": generic_message}
+                    {
+                        "message": generic_message
+                    }
                 )
 
             user = users[0]
 
             if user.is_active:
                 return Response(
-                    {"message": generic_message}
+                    {
+                        "message": generic_message
+                    }
                 )
 
             try:
@@ -307,29 +393,39 @@ def resend_email_otp(request):
                     EmailOTP.objects.select_for_update()
                     .get(user=user)
                 )
+
             except EmailOTP.DoesNotExist:
                 return Response(
-                    {"message": generic_message}
+                    {
+                        "message": generic_message
+                    }
                 )
 
             if verification.is_verified:
                 return Response(
-                    {"message": generic_message}
+                    {
+                        "message": generic_message
+                    }
                 )
 
-            # Prevent repeated OTP requests
+            # ----------------------------------
+            # 60-SECOND RESEND COOLDOWN
+            # ----------------------------------
+
             if verification.last_sent_at:
                 next_allowed = (
                     verification.last_sent_at
                     + timedelta(seconds=60)
                 )
 
-                if timezone.now() < next_allowed:
+                now = timezone.now()
+
+                if now < next_allowed:
                     remaining = max(
                         1,
                         int(
                             (
-                                next_allowed - timezone.now()
+                                next_allowed - now
                             ).total_seconds()
                         ) + 1,
                     )
@@ -342,21 +438,28 @@ def resend_email_otp(request):
                             ),
                             "retry_after": remaining,
                         },
-                        status=status.HTTP_429_TOO_MANY_REQUESTS,
+                        status=(
+                            status.HTTP_429_TOO_MANY_REQUESTS
+                        ),
                         headers={
                             "Retry-After": str(remaining),
                         },
                     )
 
+            # ----------------------------------
+            # GENERATE AND SEND NEW OTP
+            # ----------------------------------
+
             otp = verification.generate_otp()
 
-            # Sending inside this transaction means
-            # an exception rolls back the new OTP,
-            # preserving the previous OTP in the DB.
+            # A provider exception rolls back
+            # the newly generated OTP.
             send_verification_email(user, otp)
 
     except Exception:
-        logger.exception("OTP resend failed")
+        logger.exception(
+            "OTP resend failed"
+        )
 
         return Response(
             {
@@ -372,7 +475,8 @@ def resend_email_otp(request):
         {
             "message": generic_message,
             "retry_after": 60,
-        }
+        },
+        status=status.HTTP_200_OK,
     )
 
 
@@ -384,19 +488,35 @@ def resend_email_otp(request):
 @permission_classes([AllowAny])
 @throttle_classes([LoginThrottle])
 def login_customer(request):
-    serializer = LoginSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
+    serializer = LoginSerializer(
+        data=request.data
+    )
 
-    email = serializer.validated_data["email"].strip()
-    password = serializer.validated_data["password"]
+    serializer.is_valid(
+        raise_exception=True
+    )
+
+    email = serializer.validated_data[
+        "email"
+    ].strip()
+
+    password = serializer.validated_data[
+        "password"
+    ]
 
     matching_users = list(
-        User.objects.filter(email__iexact=email)[:2]
+        User.objects.filter(
+            email__iexact=email
+        )[:2]
     )
 
     if len(matching_users) != 1:
         return Response(
-            {"error": "Invalid email or password."},
+            {
+                "error": (
+                    "Invalid email or password."
+                )
+            },
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
@@ -404,7 +524,11 @@ def login_customer(request):
 
     if not user.check_password(password):
         return Response(
-            {"error": "Invalid email or password."},
+            {
+                "error": (
+                    "Invalid email or password."
+                )
+            },
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
@@ -428,16 +552,23 @@ def login_customer(request):
             )
 
         return Response(
-            {"error": "This account is inactive."},
+            {
+                "error": (
+                    "This account is inactive."
+                )
+            },
             status=status.HTTP_403_FORBIDDEN,
         )
 
     return Response(
         {
             "message": "Login successful.",
-            "user": CustomerSerializer(user).data,
+            "user": CustomerSerializer(
+                user
+            ).data,
             "tokens": generate_tokens(user),
-        }
+        },
+        status=status.HTTP_200_OK,
     )
 
 
@@ -449,7 +580,10 @@ def login_customer(request):
 @permission_classes([IsAuthenticated])
 def customer_profile(request):
     return Response(
-        CustomerSerializer(request.user).data
+        CustomerSerializer(
+            request.user
+        ).data,
+        status=status.HTTP_200_OK,
     )
 
 
@@ -470,7 +604,10 @@ def customer_orders(request):
     reviewed_product_ids = set(
         ProductReview.objects.filter(
             customer=request.user
-        ).values_list("product_id", flat=True)
+        ).values_list(
+            "product_id",
+            flat=True,
+        )
     )
 
     results = []
@@ -508,11 +645,20 @@ def customer_orders(request):
             "order_number": order.order_number,
             "total": str(order.total),
             "status": order.status,
-            "status_display": order.get_status_display(),
-            "payment_method": order.payment_method,
-            "payment_status": order.payment_status,
+            "status_display": (
+                order.get_status_display()
+            ),
+            "payment_method": (
+                order.payment_method
+            ),
+            "payment_status": (
+                order.payment_status
+            ),
             "created_at": order.created_at,
             "items": order_items,
         })
 
-    return Response(results)
+    return Response(
+        results,
+        status=status.HTTP_200_OK,
+    )
